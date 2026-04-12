@@ -270,7 +270,7 @@
             <span class="modal-close" onclick="closeFishModal()">&times;</span>
             <h3 class="modal-title" id="fish-modal-title">طريقة الطبخ</h3>
             
-            <div class="weight-control-group">
+            <div class="weight-control-group" id="weight-control-group">
                 <span class="weight-label" id="weight-label-text">الوزن المطلوب:</span>
                 <div class="stepper">
                     <button class="stepper-btn" onclick="changeFishWeight(-0.5)">-</button>
@@ -442,7 +442,7 @@
         function addToCartClicked(itemId, categoryNameAr) {
             const item = menuData.items[categoryNameAr].find(i => i.id === itemId.toString());
             if (!item) return;
-            if (item.isFish) openFishModal(item); else addToCart(item);
+            if (item.isFish) openFishModal(item, categoryNameAr); else addToCart(item);
         }
 
         function changeFishWeight(amount) {
@@ -453,13 +453,22 @@
             }
         }
 
-        function openFishModal(item) {
+        function openFishModal(item, categoryNameAr) {
             currentFishSelection = item;
             currentFishWeight = 1.0; 
             document.getElementById('fish-weight-display').textContent = "1.0";
             document.getElementById('fish-modal-title').textContent = `${currentLang === 'ar' ? item.nameAr : item.nameEn}`;
             document.getElementById('fried-input').checked = false; document.getElementById('grilled-input').checked = false;
             document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
+
+            const weightGroup = document.getElementById('weight-control-group');
+            // إظهار الوزن فقط إذا كان اسم القسم يحتوي على كلمة أسماك أو اسماك
+            if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) {
+                weightGroup.style.display = 'flex';
+            } else {
+                weightGroup.style.display = 'none';
+            }
+
             document.getElementById('fish-modal-overlay').style.display = 'flex';
         }
 
@@ -480,17 +489,29 @@
             if (!friedChecked && !grilledChecked) { alert(translations[currentLang].cookingMethod); return; }
 
             const methodAr = friedChecked ? 'مقلي' : 'مشوي'; const methodEn = friedChecked ? 'Fried' : 'Grilled';
-            const itemKey = `${currentFishSelection.id}_${methodAr}_${currentFishWeight}`;
+            const showWeight = document.getElementById('weight-control-group').style.display !== 'none';
+            
+            let optionTextAr = methodAr;
+            let optionTextEn = methodEn;
+            let finalPrice = currentFishSelection.price;
+            let itemKey = `${currentFishSelection.id}_${methodAr}`;
+
+            if (showWeight) {
+                optionTextAr += ` (${currentFishWeight} كجم)`;
+                optionTextEn += ` (${currentFishWeight} KG)`;
+                finalPrice = currentFishSelection.price * currentFishWeight;
+                itemKey += `_${currentFishWeight}`;
+            }
             
             if (currentCart[itemKey]) {
                 currentCart[itemKey].quantity += 1;
             } else {
                 currentCart[itemKey] = { 
                     ...currentFishSelection, 
-                    optionAr: `${methodAr} (${currentFishWeight} كجم)`, 
-                    optionEn: `${methodEn} (${currentFishWeight} KG)`,
+                    optionAr: optionTextAr, 
+                    optionEn: optionTextEn,
                     quantity: 1, 
-                    price: currentFishSelection.price * currentFishWeight 
+                    price: finalPrice 
                 };
             }
             updateCartDisplay(); closeFishModal();
