@@ -73,15 +73,12 @@
         html[dir="ltr"] .section-title::after { left: auto; right: 0; }
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
 
-        /* تعديلات حالة عدم التوفر (Out of Stock) */
+        /* تعديلات حالة عدم التوفر (Out of Stock) بدون الملصق الأحمر */
         .item-card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: 0 6px 15px rgba(28, 61, 82, 0.04); display: flex; flex-direction: column; transition: all 0.3s ease; border: 1px solid rgba(51, 165, 182, 0.05); animation: fadeIn 0.5s ease-out forwards; position: relative; }
         .item-card:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(51, 165, 182, 0.15); border-color: rgba(51, 165, 182, 0.3); }
         
-        .item-card.out-of-stock { opacity: 0.7; pointer-events: none; } /* يمنع الضغط على الكرت كاملاً */
-        .item-card.out-of-stock .item-image { filter: grayscale(100%); } /* يحول الصورة لرمادي */
-        
-        .out-of-stock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.4); z-index: 5; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
-        .out-of-stock-badge { background: var(--red-error); color: white; padding: 8px 20px; border-radius: 8px; font-size: 18px; font-weight: 800; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); transform: rotate(-5deg); }
+        .item-card.out-of-stock { opacity: 0.7; pointer-events: none; } 
+        .item-card.out-of-stock .item-image { filter: grayscale(100%); } 
 
         .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .item-title { color: var(--dark-blue); font-size: 18px; font-weight: 800; }
@@ -421,7 +418,6 @@
                         if (!menuData.categoriesAr.includes(catAr)) { menuData.categoriesAr.push(catAr); menuData.categoriesEn.push(catEn); }
                     }
                     
-                    // ذكاء التوفر: إذا لم يكن هناك عمود available نعتبره متوفر، وإلا نقرأ حالة الصح (TRUE)
                     let isAvailable = item.hasOwnProperty('available') ? (item.available === true || String(item.available).toUpperCase() === 'TRUE') : true;
 
                     menuData.items[catAr].push({
@@ -505,12 +501,12 @@
                 const grid = document.createElement('div'); grid.className = 'menu-grid';
                 items.forEach(item => {
                     const card = document.createElement('div'); 
-                    card.className = `item-card ${item.isAvailable ? '' : 'out-of-stock'}`; // إضافة كلاس عدم التوفر
+                    card.className = `item-card ${item.isAvailable ? '' : 'out-of-stock'}`; 
                     
                     let badgeHTML = item.badge && item.isAvailable ? `<span class="item-badge">${item.badge}</span>` : '';
-                    let outOfStockOverlay = item.isAvailable ? '' : `<div class="out-of-stock-overlay"><span class="out-of-stock-badge">${translations[currentLang].outOfStock}</span></div>`;
+                    // تم إزالة الملصق الأحمر المائل (outOfStockOverlay) من هنا بناءً على طلبك
                     
-                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}${outOfStockOverlay}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}${outOfStockOverlay}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
+                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
                     
                     let btnHTML = item.isAvailable 
                         ? `<button class="add-to-cart-btn" onclick="addToCartClicked(event, '${item.id}', '${categoryNameAr}')">${translations[currentLang].addCart}</button>`
