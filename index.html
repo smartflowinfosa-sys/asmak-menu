@@ -24,22 +24,29 @@
         }
 
         body {
-            background-color: var(--marine-bg); color: var(--text-main); overflow-x: hidden; padding-bottom: 90px; 
+            background-color: var(--marine-bg); color: var(--text-main); overflow-x: hidden; 
+            padding-bottom: 100px; /* لترك مساحة للشريط السفلي الجديد */
             background-image: radial-gradient(circle at top right, rgba(51,165,182,0.05) 0%, transparent 40%),
                               radial-gradient(circle at bottom left, rgba(244,121,32,0.03) 0%, transparent 40%);
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes floatCart { 0% { transform: translateY(-50%) scale(1); box-shadow: 0 4px 15px rgba(28,61,82,0.3); } 50% { transform: translateY(-50%) scale(1.08); box-shadow: 0 8px 25px rgba(51,165,182,0.5); } 100% { transform: translateY(-50%) scale(1); box-shadow: 0 4px 15px rgba(28,61,82,0.3); } }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes shimmer { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-        header { background: linear-gradient(to bottom, var(--white), #fafdff); padding: 20px 20px 15px; box-shadow: 0 4px 20px rgba(51, 165, 182, 0.08); position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 3px solid var(--primary-aqua); }
+        /* تأثير الزجاج المطفى للهيدر */
+        header { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 20px 20px 15px; box-shadow: 0 4px 20px rgba(51, 165, 182, 0.08); 
+            position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 1px solid rgba(51, 165, 182, 0.1); 
+        }
+        
         .logo-container { width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 4px solid var(--white); box-shadow: 0 5px 15px rgba(28, 61, 82, 0.15); background-color: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; position: relative; }
         .logo-container::before { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-aqua), var(--dark-blue)); z-index: -1; }
         .logo-img { width: 100%; height: 100%; object-fit: cover; background: white; border-radius: 50%; }
         .restaurant-name { color: var(--dark-blue); font-size: 22px; font-weight: 800; display: flex; flex-direction: column; align-items: center; text-align: center; letter-spacing: 0.5px; }
-        .restaurant-phone { font-size: 16px; margin-top: 10px; direction: ltr; font-family: sans-serif; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 15px; background: var(--marine-bg); padding: 6px 18px; border-radius: 30px; border: 1px solid rgba(51, 165, 182, 0.2); }
+        .restaurant-phone { font-size: 16px; margin-top: 10px; direction: ltr; font-family: sans-serif; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 15px; background: rgba(240, 248, 249, 0.8); padding: 6px 18px; border-radius: 30px; border: 1px solid rgba(51, 165, 182, 0.2); }
         .contact-icon { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: white; text-decoration: none; transition: transform 0.2s ease; }
         .contact-icon:hover { transform: scale(1.1); }
         .whatsapp-icon { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 3px 8px rgba(37,211,102,0.3); }
@@ -49,7 +56,6 @@
         .lang-switch-btn { position: absolute; top: 20px; left: 20px; background: var(--white); color: var(--dark-blue); border: 2px solid var(--primary-aqua); border-radius: 20px; padding: 6px 16px; font-weight: 800; cursor: pointer; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(51, 165, 182, 0.1); }
         .lang-switch-btn:hover { background: var(--primary-aqua); color: var(--white); }
         
-        /* زر مشاركة المنيو العام */
         .global-share-btn { position: absolute; top: 20px; right: 20px; background: var(--white); color: var(--dark-blue); border: 2px solid var(--primary-aqua); border-radius: 20px; padding: 6px 12px; font-weight: 800; cursor: pointer; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(51, 165, 182, 0.1); display: flex; align-items: center; gap: 6px; }
         .global-share-btn:hover { background: var(--primary-aqua); color: var(--white); }
 
@@ -81,14 +87,8 @@
         .item-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .item-card:hover .item-image { transform: scale(1.05); }
 
-        /* تصميم الملصقات (Badges) */
         .item-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, var(--logo-orange), #e66a15); color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 2; letter-spacing: 0.5px; }
         html[dir="ltr"] .item-badge { right: auto; left: 10px; }
-
-        /* تصميم زر مشاركة الصنف */
-        .item-share-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--dark-blue); box-shadow: 0 3px 8px rgba(0,0,0,0.15); z-index: 2; transition: all 0.2s;}
-        .item-share-btn:hover { background: var(--primary-aqua); color: white; transform: scale(1.1); }
-        html[dir="ltr"] .item-share-btn { left: auto; right: 10px; }
 
         .add-to-cart-btn { background: var(--marine-bg); color: var(--primary-aqua); border: 2px solid var(--primary-aqua); border-radius: 10px; padding: 12px; font-weight: 800; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s ease; margin-top: auto; }
         .add-to-cart-btn:hover { background: linear-gradient(135deg, var(--primary-aqua), var(--dark-blue)); color: var(--white); border-color: transparent; box-shadow: 0 4px 12px rgba(51, 165, 182, 0.3); }
@@ -116,11 +116,6 @@
         .option-text { font-size: 18px; font-weight: 700; color: var(--dark-blue); }
         .confirm-modal-btn { background: linear-gradient(135deg, var(--logo-orange), #e66a15); color: var(--white); border: none; border-radius: 12px; padding: 15px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 15px rgba(244, 121, 32, 0.3); transition: transform 0.2s; }
         .confirm-modal-btn:active { transform: scale(0.98); }
-
-        .floating-cart-btn { position: fixed; top: 50%; left: 20px; transform: translateY(-50%); background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); color: var(--white); width: 70px; height: 70px; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px solid var(--white); z-index: 900; cursor: pointer; display: none; animation: floatCart 3s ease-in-out infinite; }
-        html[dir="ltr"] .floating-cart-btn { left: auto; right: 20px; }
-        .floating-cart-btn .cart-icon { font-size: 26px; margin-bottom: -2px; }
-        .floating-cart-btn .cart-badge { position: absolute; top: -5px; right: -5px; background-color: var(--logo-orange); color: var(--white); width: 26px; height: 26px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid var(--white); }
 
         .checkout-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--marine-bg); border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(51, 165, 182, 0.1); }
         .checkout-item-details { flex-grow: 1; }
@@ -167,15 +162,50 @@
         .invoice-logo-small { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid var(--primary-aqua); box-shadow: 0 4px 10px rgba(28,61,82,0.1); }
         .btn-download-pdf { background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); color: var(--white); border: none; border-radius: 12px; padding: 18px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(28,61,82,0.2); }
 
-        .site-footer { text-align: center; padding: 25px 15px; margin-top: auto; border-top: 1px solid rgba(28, 61, 82, 0.1); color: #666; font-size: 14px; }
-        .site-footer p { margin-bottom: 8px; }
-        .powered-by { display: inline-block; font-weight: 800; color: var(--primary-aqua); background: rgba(51, 165, 182, 0.1); padding: 6px 15px; border-radius: 20px; font-family: sans-serif; letter-spacing: 0.5px; }
-
-        @media (max-width: 600px) {
-            .checkout-actions { grid-template-columns: 1fr; }
-            .checkout-item { flex-wrap: wrap; }
-            .remove-item-btn { order: -1; margin-right: 0; margin-left: 10px; }
+        .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; border-top: 1px solid rgba(28, 61, 82, 0.1); color: #666; font-size: 14px; }
+        .site-footer p { margin-bottom: 12px; }
+        
+        /* التعديل الجذري لشعار Smart Flow المضيء النحيف */
+        .powered-by { 
+            display: inline-block; 
+            font-weight: 500; /* خط نحيف */
+            color: var(--primary-aqua); 
+            background: rgba(51, 165, 182, 0.04); 
+            padding: 5px 18px; 
+            border-radius: 20px; 
+            font-family: 'Segoe UI', Arial, sans-serif; /* خط إنجليزي عصري ونحيف */
+            letter-spacing: 0.5px; 
+            border: 1px solid rgba(51, 165, 182, 0.3); /* إطار نحيف */
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 2px 10px rgba(51, 165, 182, 0.05);
         }
+        .powered-by::before { /* تأثير اللمعة المتحركة */
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-20deg); animation: shimmer 3s infinite;
+        }
+
+        /* تصميم الشريط السفلي العائم */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); 
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+            z-index: 1000; border-top: 1px solid rgba(51,165,182,0.1);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s ease; position: relative; width: 45%; }
+        .nav-item.active { color: var(--primary-aqua); }
+        .nav-icon { font-size: 24px; margin-bottom: 4px; transition: transform 0.2s; }
+        .nav-item.active .nav-icon { transform: translateY(-2px); }
+        .nav-badge { position: absolute; top: -5px; right: 50%; transform: translateX(20px); background: var(--logo-orange); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 800; border: 2px solid white; display: none; }
+        html[dir="ltr"] .nav-badge { right: auto; left: 50%; transform: translateX(0px); }
+
+        /* تأثير طيران الصورة */
+        .flying-img { position: fixed; z-index: 9999; border-radius: 50%; width: 60px; height: 60px; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.2); pointer-events: none; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
+
     </style>
 </head>
 <body>
@@ -203,10 +233,6 @@
     <div id="menu-phase" class="menu-phase active-phase">
         <nav class="category-nav" id="category-nav"></nav>
         <main class="container" id="menu-container"></main>
-        <div class="floating-cart-btn" id="floating-cart-btn" onclick="goToCheckout()">
-            <span class="cart-badge" id="cart-badge-count">0</span>
-            <span class="cart-icon">🛒</span>
-        </div>
     </div>
 
     <div id="checkout-phase" class="checkout-phase container">
@@ -310,9 +336,21 @@
                     <span class="option-text" id="text-grilled">مشوي - Grilled</span>
                 </label>
             </div>
-            <button class="confirm-modal-btn" id="btn-confirm-modal" onclick="confirmFishAddition()">تأكيد وإضافة - Add</button>
+            <button class="confirm-modal-btn" id="btn-confirm-modal" onclick="confirmFishAddition(event)">تأكيد وإضافة - Add</button>
         </div>
     </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" id="nav-home-btn" onclick="backToMenu()">
+            <span class="nav-icon">🏠</span>
+            <span id="nav-home-text">الرئيسية</span>
+        </div>
+        <div class="nav-item" id="nav-cart-btn" onclick="goToCheckout()">
+            <span class="nav-icon" id="cart-icon-dest">🛒</span>
+            <span class="nav-badge" id="bottom-cart-badge">0</span>
+            <span id="nav-cart-text">السلة</span>
+        </div>
+    </nav>
 
     <footer class="site-footer">
         <p id="footer-text">جميع الحقوق محفوظة © 2026</p>
@@ -320,17 +358,11 @@
     </footer>
 
     <script>
-        // 1. دليل المطاعم 
         const restaurantsConfig = {
             "asmak": {
-                nameAr: "أسماك المحيط",
-                nameEn: "Asmak Al Mohit",
-                phone: "0535659695",
-                logo: "لوقو اسماك المحيط.jpeg", 
-                primaryColor: "#33a5b6",
+                nameAr: "أسماك المحيط", nameEn: "Asmak Al Mohit", phone: "0535659695", logo: "لوقو اسماك المحيط.jpeg", primaryColor: "#33a5b6",
                 sheetyUrl: "https://api.sheety.co/abac8a09c57e6cc05855740b0d02ef96/asmakalmohitMenu/menu"
             }
-            // يمكنك إضافة المزيد هنا
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -346,9 +378,7 @@
         document.getElementById('footer-text').textContent = `جميع الحقوق محفوظة لمطعم ${currentRestaurant.nameAr} © 2026`;
         document.documentElement.style.setProperty('--primary-aqua', currentRestaurant.primaryColor);
         
-        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => {
-            link.href = `https://wa.me/966${currentRestaurant.phone.substring(1)}`;
-        });
+        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => { link.href = `https://wa.me/966${currentRestaurant.phone.substring(1)}`; });
         document.querySelectorAll('.phone-text, a[href^="tel:"]').forEach(link => {
             if(link.tagName === 'A') link.href = `tel:${currentRestaurant.phone}`;
             if(link.classList.contains('phone-text')) link.textContent = currentRestaurant.phone;
@@ -363,7 +393,7 @@
                 orderNotesPlace: "ملاحظات حول الطلب...", promoPlace: "كود الخصم", btnApply: "تطبيق", btnBack: "رجوع للمنيو", btnConfirm: "تأكيد وإرسال", btnConfirmModal: "تأكيد وإضافة",
                 subtotalLabel: "الإجمالي قبل الخصم:", discountLabel: "الخصم (15%):", totalLabel: "الإجمالي النهائي:", currency: "ريال", qty: "الكمية:", emptyCart: "السلة فارغة، يرجى إضافة عناصر من المنيو.",
                 nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:",
-                shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!"
+                shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!", navHome: "الرئيسية", navCart: "السلة"
             },
             en: {
                 lang: "AR", nameAr: currentRestaurant.nameAr, nameEn: currentRestaurant.nameEn, addCart: "Add +", cookingMethod: "Please select an option", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
@@ -371,7 +401,7 @@
                 orderNotesPlace: "Order notes...", promoPlace: "Promo code", btnApply: "Apply", btnBack: "Back", btnConfirm: "Confirm & Send", btnConfirmModal: "Add",
                 subtotalLabel: "Subtotal:", discountLabel: "Discount (15%):", totalLabel: "Grand Total:", currency: "SR", qty: "Qty:", emptyCart: "Cart is empty.",
                 nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:",
-                shareMenu: "Share", linkCopied: "Link copied successfully!"
+                shareMenu: "Share", linkCopied: "Link copied successfully!", navHome: "Home", navCart: "Cart"
             }
         };
 
@@ -391,66 +421,32 @@
                 const sheetItems = data.menu || data[Object.keys(data)[0]];
 
                 if (!sheetItems || sheetItems.length === 0) {
-                    document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px;">المنيو فارغ حالياً.</div>';
-                    return;
+                    document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px;">المنيو فارغ حالياً.</div>'; return;
                 }
 
                 menuData = { categoriesAr: [], categoriesEn: [], items: {} };
 
                 sheetItems.forEach(item => {
-                    const catAr = item.category || "غير مصنف";
-                    const catEn = item.categoryEn || catAr; 
+                    const catAr = item.category || "غير مصنف"; const catEn = item.categoryEn || catAr; 
                     if (!menuData.items[catAr]) {
                         menuData.items[catAr] = [];
-                        if (!menuData.categoriesAr.includes(catAr)) {
-                            menuData.categoriesAr.push(catAr);
-                            menuData.categoriesEn.push(catEn);
-                        }
+                        if (!menuData.categoriesAr.includes(catAr)) { menuData.categoriesAr.push(catAr); menuData.categoriesEn.push(catEn); }
                     }
                     menuData.items[catAr].push({
                         id: item.id ? item.id.toString() : Math.random().toString(36).substr(2, 9),
                         nameAr: item.nameAr || "", nameEn: item.nameEn || "", price: parseFloat(item.price) || 0,
-                        isFish: String(item.isFish).toUpperCase() === "TRUE", image: item.image || "",
-                        badge: item.badge || "" // قراءة عمود الملصق الجديد
+                        isFish: String(item.isFish).toUpperCase() === "TRUE", image: item.image || "", badge: item.badge || "" 
                     });
                 });
 
                 try {
                     currentLang = localStorage.getItem('asmakLang') || 'ar'; 
                     let savedIdx = localStorage.getItem('asmakCategoryIdx');
-                    if (savedIdx !== null && savedIdx < menuData.categoriesAr.length) {
-                        currentCategoryIdx = parseInt(savedIdx);
-                    }
+                    if (savedIdx !== null && savedIdx < menuData.categoriesAr.length) { currentCategoryIdx = parseInt(savedIdx); }
                 } catch(e) {}
-
-                // Deep Linking: هل العميل ضغط على رابط وجبة معينة؟
-                const targetItemId = urlParams.get('item');
-                if (targetItemId) {
-                    for (let i = 0; i < menuData.categoriesAr.length; i++) {
-                        const catAr = menuData.categoriesAr[i];
-                        if (menuData.items[catAr].find(item => item.id === targetItemId)) {
-                            currentCategoryIdx = i; break;
-                        }
-                    }
-                }
-
                 init();
-
-                // النزول التلقائي للوجبة المطلوبة
-                if (targetItemId) {
-                    setTimeout(() => {
-                        const targetCard = document.getElementById('item-card-' + targetItemId);
-                        if (targetCard) {
-                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            targetCard.style.boxShadow = "0 0 20px var(--logo-orange)";
-                            setTimeout(() => targetCard.style.boxShadow = "0 6px 15px rgba(28, 61, 82, 0.04)", 2500);
-                        }
-                    }, 500);
-                }
-
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو. تأكد من إعدادات الرابط.</div>';
+                console.error("Error:", error); document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو. تأكد من إعدادات الرابط.</div>';
             }
         }
 
@@ -478,23 +474,17 @@
             document.getElementById('text-grilled').textContent = translations[lang].grilled;
             document.getElementById('btn-confirm-modal').textContent = translations[lang].btnConfirmModal;
             document.getElementById('weight-label-text').textContent = translations[lang].weightLabel;
+            document.getElementById('nav-home-text').textContent = translations[lang].navHome;
+            document.getElementById('nav-cart-text').textContent = translations[lang].navCart;
             renderCategoryNav(); showCategoryByIndex(currentCategoryIdx);
         }
 
         function toggleLanguage() { setLanguage(currentLang === 'ar' ? 'en' : 'ar'); }
 
-        // وظائف المشاركة الذكية
         function shareMenu() {
             const url = window.location.origin + window.location.pathname + "?id=" + currentRestaurantId;
             const title = currentLang === 'ar' ? currentRestaurant.nameAr : currentRestaurant.nameEn;
             if (navigator.share) { navigator.share({ title: title, url: url }).catch(console.error); } 
-            else { navigator.clipboard.writeText(url); alert(translations[currentLang].linkCopied); }
-        }
-
-        function shareItem(itemId, itemName) {
-            const url = window.location.origin + window.location.pathname + "?id=" + currentRestaurantId + "&item=" + itemId;
-            const text = currentLang === 'ar' ? `جرب ${itemName} من ${currentRestaurant.nameAr}!` : `Try ${itemName} from ${currentRestaurant.nameEn}!`;
-            if (navigator.share) { navigator.share({ title: itemName, text: text, url: url }).catch(console.error); } 
             else { navigator.clipboard.writeText(url); alert(translations[currentLang].linkCopied); }
         }
 
@@ -522,16 +512,10 @@
                 const grid = document.createElement('div'); grid.className = 'menu-grid';
                 items.forEach(item => {
                     const card = document.createElement('div'); card.className = 'item-card'; 
-                    card.id = 'item-card-' + item.id; // تحديد الآي دي للنزول التلقائي
-                    
                     let badgeHTML = item.badge ? `<span class="item-badge">${item.badge}</span>` : '';
-                    let shareHTML = `<button class="item-share-btn" onclick="event.stopPropagation(); shareItem('${item.id}', '${currentLang === 'ar' ? item.nameAr : item.nameEn}')" title="مشاركة">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    </button>`;
+                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
                     
-                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}${shareHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}${shareHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
-                    
-                    card.innerHTML = `${imageHTML}<div class="item-header"><span class="item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span><span class="item-price">${item.price} ${translations[currentLang].currency}</span></div><button class="add-to-cart-btn" onclick="addToCartClicked('${item.id}', '${categoryNameAr}')">${translations[currentLang].addCart}</button>`;
+                    card.innerHTML = `${imageHTML}<div class="item-header"><span class="item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span><span class="item-price">${item.price} ${translations[currentLang].currency}</span></div><button class="add-to-cart-btn" onclick="addToCartClicked(event, '${item.id}', '${categoryNameAr}')">${translations[currentLang].addCart}</button>`;
                     grid.appendChild(card);
                 });
                 section.appendChild(grid);
@@ -546,38 +530,69 @@
             renderMenu(idx);
         }
 
-        function addToCartClicked(itemId, categoryNameAr) {
+        // محرك الأنيميشن الذكي (طيران الصورة)
+        function flyToCartAnimation(event, imgSrc) {
+            if(!event || !imgSrc) return;
+            // اهتزاز الجوال إذا كان مدعوماً
+            if (navigator.vibrate) { navigator.vibrate(50); }
+
+            const cartIcon = document.getElementById('cart-icon-dest');
+            const flyingImg = document.createElement('img');
+            flyingImg.src = imgSrc; flyingImg.className = 'flying-img';
+
+            const startX = event.clientX; const startY = event.clientY;
+            const targetRect = cartIcon.getBoundingClientRect();
+            const targetX = targetRect.left + (targetRect.width / 2) - 30; // 30 هو نصف عرض الصورة
+            const targetY = targetRect.top + (targetRect.height / 2) - 30;
+
+            flyingImg.style.left = startX + 'px'; flyingImg.style.top = startY + 'px';
+            document.body.appendChild(flyingImg);
+
+            flyingImg.getBoundingClientRect(); // إجبار المتصفح على قراءة المكان قبل الطيران
+
+            flyingImg.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.1)`;
+            flyingImg.style.opacity = '0.5';
+
+            setTimeout(() => {
+                flyingImg.remove();
+                cartIcon.style.transform = 'scale(1.4)';
+                setTimeout(() => cartIcon.style.transform = 'scale(1)', 200);
+            }, 700); 
+        }
+
+        function addToCartClicked(event, itemId, categoryNameAr) {
             const item = menuData.items[categoryNameAr].find(i => i.id === itemId.toString());
             if (!item) return;
-            if (item.isFish) openFishModal(item, categoryNameAr); else addToCart(item);
+            if (item.isFish) openFishModal(item, categoryNameAr, event); 
+            else {
+                addToCart(item);
+                if(item.image) flyToCartAnimation(event, item.image);
+            }
         }
 
         function changeFishWeight(amount) {
             let newWeight = currentFishWeight + amount;
             if (newWeight >= 1.0) { 
-                currentFishWeight = newWeight;
-                document.getElementById('fish-weight-display').textContent = currentFishWeight.toFixed(1);
+                currentFishWeight = newWeight; document.getElementById('fish-weight-display').textContent = currentFishWeight.toFixed(1);
+                if (navigator.vibrate) { navigator.vibrate(30); }
             }
         }
 
-        function openFishModal(item, categoryNameAr) {
-            currentFishSelection = item;
-            currentFishWeight = 1.0; 
+        let tempEvent = null; // لحفظ الإيفنت للطيران بعد النافذة المنبثقة
+        function openFishModal(item, categoryNameAr, event) {
+            currentFishSelection = item; currentFishWeight = 1.0; tempEvent = event;
             document.getElementById('fish-weight-display').textContent = "1.0";
             document.getElementById('fish-modal-title').textContent = `${currentLang === 'ar' ? item.nameAr : item.nameEn}`;
             document.getElementById('fried-input').checked = false; document.getElementById('grilled-input').checked = false;
             document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
 
             const weightGroup = document.getElementById('weight-control-group');
-            if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) {
-                weightGroup.style.display = 'flex';
-            } else {
-                weightGroup.style.display = 'none';
-            }
+            if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) { weightGroup.style.display = 'flex'; } 
+            else { weightGroup.style.display = 'none'; }
             document.getElementById('fish-modal-overlay').style.display = 'flex';
         }
 
-        function closeFishModal() { document.getElementById('fish-modal-overlay').style.display = 'none'; currentFishSelection = null; }
+        function closeFishModal() { document.getElementById('fish-modal-overlay').style.display = 'none'; currentFishSelection = null; tempEvent = null;}
 
         document.querySelectorAll('.option-input').forEach(input => {
             input.addEventListener('change', function() {
@@ -586,7 +601,7 @@
             });
         });
 
-        function confirmFishAddition() {
+        function confirmFishAddition(event) {
             if (!currentFishSelection) return;
             const friedChecked = document.getElementById('fried-input').checked;
             const grilledChecked = document.getElementById('grilled-input').checked;
@@ -605,10 +620,14 @@
             }
             
             if (currentCart[itemKey]) { currentCart[itemKey].quantity += 1; } 
-            else {
-                currentCart[itemKey] = { ...currentFishSelection, optionAr: optionTextAr, optionEn: optionTextEn, quantity: 1, price: finalPrice };
+            else { currentCart[itemKey] = { ...currentFishSelection, optionAr: optionTextAr, optionEn: optionTextEn, quantity: 1, price: finalPrice }; }
+            
+            updateCartDisplay(); 
+            if(currentFishSelection.image && tempEvent) {
+                // نأخذ الإيفنت الأصلي لزر (إضافة للسلة) المخزن في tempEvent لكي تطير الصورة من الوجبة وليس النافذة
+                flyToCartAnimation(tempEvent, currentFishSelection.image);
             }
-            updateCartDisplay(); closeFishModal();
+            closeFishModal();
         }
 
         function addToCart(item) {
@@ -619,8 +638,9 @@
 
         function updateCartDisplay() {
             let totalItems = 0; for (const key in currentCart) totalItems += currentCart[key].quantity;
-            const floatingBtn = document.getElementById('floating-cart-btn'); const badgeCount = document.getElementById('cart-badge-count');
-            if (totalItems > 0) { floatingBtn.style.display = 'flex'; badgeCount.textContent = totalItems; } else { floatingBtn.style.display = 'none'; }
+            const badgeCount = document.getElementById('bottom-cart-badge');
+            if (totalItems > 0) { badgeCount.style.display = 'flex'; badgeCount.textContent = totalItems; } 
+            else { badgeCount.style.display = 'none'; }
         }
 
         function removeFromCart(itemKey) {
@@ -630,8 +650,15 @@
             }
         }
 
-        function goToCheckout() { document.getElementById('menu-phase').style.display = 'none'; document.getElementById('checkout-phase').style.display = 'block'; renderCartItems(); window.scrollTo(0, 0); }
-        function backToMenu() { document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('menu-phase').style.display = 'block'; }
+        function goToCheckout() { 
+            document.getElementById('menu-phase').style.display = 'none'; document.getElementById('checkout-phase').style.display = 'block'; 
+            document.getElementById('nav-home-btn').classList.remove('active'); document.getElementById('nav-cart-btn').classList.add('active');
+            renderCartItems(); window.scrollTo(0, 0); 
+        }
+        function backToMenu() { 
+            document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('menu-phase').style.display = 'block'; document.getElementById('thank-you-phase').style.display = 'none';
+            document.getElementById('nav-cart-btn').classList.remove('active'); document.getElementById('nav-home-btn').classList.add('active');
+        }
 
         function applyPromoCode() {
             const codeInput = document.getElementById('promo-code').value.trim().toLowerCase(); const msgElement = document.getElementById('promo-status-msg');
@@ -695,7 +722,7 @@
             html2pdf().set(opt).from(invoiceElement).save().catch(function(error) { console.error('Error:', error); alert('حدث خطأ أثناء تحميل الفاتورة.'); });
         }
 
-        function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; document.getElementById('thank-you-phase').style.display = 'none'; document.getElementById('menu-phase').style.display = 'block'; updateCartDisplay(); window.scrollTo(0, 0); }
+        function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; backToMenu(); updateCartDisplay(); window.scrollTo(0, 0); }
 
         function confirmOrder() {
             const nameInput = document.getElementById('customer-name'); const phoneInput = document.getElementById('customer-phone');
