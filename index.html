@@ -73,7 +73,6 @@
         html[dir="ltr"] .section-title::after { left: auto; right: 0; }
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
 
-        /* تعديلات حالة عدم التوفر (Out of Stock) بدون الملصق الأحمر */
         .item-card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: 0 6px 15px rgba(28, 61, 82, 0.04); display: flex; flex-direction: column; transition: all 0.3s ease; border: 1px solid rgba(51, 165, 182, 0.05); animation: fadeIn 0.5s ease-out forwards; position: relative; }
         .item-card:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(51, 165, 182, 0.15); border-color: rgba(51, 165, 182, 0.3); }
         
@@ -100,7 +99,6 @@
         .empty-section-msg { text-align: center; color: #888; padding: 40px 20px; font-style: italic; background: var(--white); border-radius: 12px; }
         .loading-msg { text-align: center; padding: 60px 20px; font-size: 18px; font-weight: bold; color: var(--primary-aqua); }
 
-        /* نوافذ وقوائم */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(28, 61, 82, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { background: var(--white); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; animation: fadeIn 0.3s ease-out; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: var(--dark-blue); transition: color 0.2s; }
@@ -120,7 +118,6 @@
         .option-text { font-size: 18px; font-weight: 700; color: var(--dark-blue); }
         .confirm-modal-btn { background: linear-gradient(135deg, var(--logo-orange), #e66a15); color: var(--white); border: none; border-radius: 12px; padding: 15px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 15px rgba(244, 121, 32, 0.3); transition: transform 0.2s; }
 
-        /* السلة والتشيك أوت */
         .checkout-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--marine-bg); border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(51, 165, 182, 0.1); }
         .checkout-item-details { flex-grow: 1; }
         .checkout-item-title { color: var(--dark-blue); font-weight: 800; font-size: 18px; }
@@ -155,7 +152,6 @@
         .confirm-order-btn::after { content: ''; position: absolute; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; display: none; }
         .confirm-order-btn.loading::after { display: block; }
 
-        /* الفاتورة */
         .thank-you-card { background: var(--white); border-radius: 16px; padding: 40px 30px; text-align: center; box-shadow: 0 8px 25px rgba(28, 61, 82, 0.06); margin-top: 20px; border: 1px solid rgba(51,165,182,0.1); }
         .invoice-box { background: #ffffff; border: 2px dashed var(--primary-aqua); padding: 25px; margin: 25px 0; border-radius: 12px; text-align: right; direction: rtl; position: relative; }
         .invoice-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: repeating-linear-gradient(to right, var(--primary-aqua) 0, var(--primary-aqua) 10px, transparent 10px, transparent 20px); border-radius: 12px 12px 0 0; }
@@ -166,7 +162,6 @@
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; border-top: 1px solid rgba(28, 61, 82, 0.1); color: #666; font-size: 14px; }
         .site-footer p { margin-bottom: 12px; }
         
-        /* التعديل الجذري لشعار Smart Flow.co */
         .powered-by { 
             display: inline-block; font-weight: 500; color: var(--primary-aqua); background: rgba(51, 165, 182, 0.04); padding: 5px 18px; border-radius: 20px; 
             font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; border: 1px solid rgba(51, 165, 182, 0.3); position: relative; overflow: hidden; box-shadow: 0 2px 10px rgba(51, 165, 182, 0.05);
@@ -176,7 +171,6 @@
             transform: skewX(-20deg); animation: shimmer 3s infinite;
         }
 
-        /* الشريط السفلي العائم */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             display: flex; justify-content: space-around; align-items: center; padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); 
@@ -261,7 +255,7 @@
             <button class="back-to-menu-btn" id="btn-back" onclick="backToMenu()">رجوع للمنيو - Back</button>
             <button class="confirm-order-btn" id="btn-confirm" onclick="confirmOrder()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                <span class="btn-text" id="btn-confirm-text">تأكيد وإرسال عبر واتساب</span>
+                <span class="btn-text" id="btn-confirm-text">تأكيد وإرسال للتحضير</span>
             </button>
         </div>
     </div>
@@ -376,7 +370,7 @@
             ar: {
                 lang: "EN", nameAr: currentRestaurant.nameAr, nameEn: currentRestaurant.nameEn, addCart: "إضافة للسلة +", cookingMethod: "يرجى اختيار الطريقة", fried: "مقلي", grilled: "مشوي", trayEmpty: "قريباً...",
                 checkoutTitle: "تأكيد طلبك", custInfoTitle: "معلومات العميل", custNamePlace: "اسم العميل*", custPhonePlace: "رقم الجوال* (05xxxxxxxx)",
-                orderNotesPlace: "ملاحظات حول الطلب...", promoPlace: "كود الخصم", btnApply: "تطبيق", btnBack: "رجوع للمنيو", btnConfirm: "تأكيد وإرسال", btnConfirmModal: "تأكيد وإضافة",
+                orderNotesPlace: "ملاحظات حول الطلب...", promoPlace: "كود الخصم", btnApply: "تطبيق", btnBack: "رجوع للمنيو", btnConfirm: "تأكيد وإرسال للتحضير", btnConfirmModal: "تأكيد وإضافة",
                 subtotalLabel: "الإجمالي قبل الخصم:", discountLabel: "الخصم (15%):", totalLabel: "الإجمالي النهائي:", currency: "ريال", qty: "الكمية:", emptyCart: "السلة فارغة، يرجى إضافة عناصر من المنيو.",
                 nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:",
                 shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!", navHome: "الرئيسية", navCart: "السلة", outOfStock: "نفدت الكمية"
@@ -384,7 +378,7 @@
             en: {
                 lang: "AR", nameAr: currentRestaurant.nameAr, nameEn: currentRestaurant.nameEn, addCart: "Add +", cookingMethod: "Please select an option", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
                 checkoutTitle: "Confirm Order", custInfoTitle: "Customer Info", custNamePlace: "Name*", custPhonePlace: "Phone* (05xxxxxxxx)",
-                orderNotesPlace: "Order notes...", promoPlace: "Promo code", btnApply: "Apply", btnBack: "Back", btnConfirm: "Confirm & Send", btnConfirmModal: "Add",
+                orderNotesPlace: "Order notes...", promoPlace: "Promo code", btnApply: "Apply", btnBack: "Back", btnConfirm: "Confirm Order", btnConfirmModal: "Add",
                 subtotalLabel: "Subtotal:", discountLabel: "Discount (15%):", totalLabel: "Grand Total:", currency: "SR", qty: "Qty:", emptyCart: "Cart is empty.",
                 nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:",
                 shareMenu: "Share", linkCopied: "Link copied successfully!", navHome: "Home", navCart: "Cart", outOfStock: "Out of Stock"
@@ -703,9 +697,18 @@
 
         function downloadPDF() {
             if (typeof html2pdf === 'undefined') { alert('جاري تحميل أداة إنشاء الفاتورة أو لا يوجد اتصال بالإنترنت.'); return; }
-            const invoiceElement = document.getElementById('invoice-content'); const invoiceNumDisplay = document.getElementById('invoice-number-display').textContent;
+            const invoiceElement = document.getElementById('invoice-content'); 
+            const invoiceNumDisplay = document.getElementById('invoice-number-display').textContent;
             const invoiceNum = invoiceNumDisplay ? invoiceNumDisplay.replace('#', '') : '00000';
-            var opt = { margin: 10, filename: currentRestaurantId + '_Invoice_' + invoiceNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, allowTaint: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            
+            // إعدادات قوية لمنع ظهور الصفحة البيضاء في الجوالات (تحديد موقع الالتقاط بدقة)
+            var opt = { 
+                margin: [10, 10, 10, 10], 
+                filename: currentRestaurantId + '_Invoice_' + invoiceNum + '.pdf', 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            };
             html2pdf().set(opt).from(invoiceElement).save().catch(function(error) { console.error('Error:', error); alert('حدث خطأ أثناء تحميل الفاتورة.'); });
         }
 
@@ -751,8 +754,15 @@
             const webhookUrl = "http://localhost:5678/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
 
             fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
-            .then(response => { btnConfirm.classList.remove('loading'); if(!response.ok) throw new Error("Network response was not ok"); buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); })
-            .catch(error => { btnConfirm.classList.remove('loading'); const encodedMessage = encodeURIComponent(message); window.open(`https://wa.me/966${currentRestaurant.phone.substring(1)}?text=${encodedMessage}`, '_blank'); buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); });
+            .then(response => { 
+                btnConfirm.classList.remove('loading'); 
+                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
+            })
+            .catch(error => { 
+                btnConfirm.classList.remove('loading'); 
+                // تم إزالة كود فتح الواتساب الإجباري (window.open) لتجنب الحظر من متصفح الجوال
+                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
+            });
         }
 
         window.onload = fetchMenuFromSheets;
