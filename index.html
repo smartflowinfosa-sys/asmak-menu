@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أسماك المحيط - Asmak Al Mohit</title>
+    <title>Smart Flow Menu</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -45,9 +45,16 @@
         .whatsapp-icon { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 3px 8px rgba(37,211,102,0.3); }
         .call-icon { background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); box-shadow: 0 3px 8px rgba(28,61,82,0.3); }
         .phone-text { color: var(--logo-orange); text-decoration: none; letter-spacing: 1px;}
+        
         .lang-switch-btn { position: absolute; top: 20px; left: 20px; background: var(--white); color: var(--dark-blue); border: 2px solid var(--primary-aqua); border-radius: 20px; padding: 6px 16px; font-weight: 800; cursor: pointer; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(51, 165, 182, 0.1); }
         .lang-switch-btn:hover { background: var(--primary-aqua); color: var(--white); }
+        
+        /* زر مشاركة المنيو العام */
+        .global-share-btn { position: absolute; top: 20px; right: 20px; background: var(--white); color: var(--dark-blue); border: 2px solid var(--primary-aqua); border-radius: 20px; padding: 6px 12px; font-weight: 800; cursor: pointer; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(51, 165, 182, 0.1); display: flex; align-items: center; gap: 6px; }
+        .global-share-btn:hover { background: var(--primary-aqua); color: var(--white); }
+
         html[dir="ltr"] .lang-switch-btn { left: auto; right: 20px; }
+        html[dir="ltr"] .global-share-btn { right: auto; left: 20px; }
 
         .category-nav { display: flex; overflow-x: auto; white-space: nowrap; background: var(--white); padding: 15px 20px; box-shadow: 0 4px 15px rgba(28, 61, 82, 0.05); scrollbar-width: none; margin-bottom: 20px; }
         .category-nav::-webkit-scrollbar { display: none; }
@@ -68,10 +75,20 @@
         .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .item-title { color: var(--dark-blue); font-size: 18px; font-weight: 800; }
         .item-price { color: var(--logo-orange); font-weight: 800; font-size: 18px; background: rgba(244, 121, 32, 0.1); padding: 4px 10px; border-radius: 8px; }
+        
         .item-image-container { width: 100%; height: 190px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; background: var(--marine-bg); position: relative; }
         .item-image-container::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, transparent 80%, rgba(0,0,0,0.03)); pointer-events: none; }
         .item-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .item-card:hover .item-image { transform: scale(1.05); }
+
+        /* تصميم الملصقات (Badges) */
+        .item-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, var(--logo-orange), #e66a15); color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 2; letter-spacing: 0.5px; }
+        html[dir="ltr"] .item-badge { right: auto; left: 10px; }
+
+        /* تصميم زر مشاركة الصنف */
+        .item-share-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--dark-blue); box-shadow: 0 3px 8px rgba(0,0,0,0.15); z-index: 2; transition: all 0.2s;}
+        .item-share-btn:hover { background: var(--primary-aqua); color: white; transform: scale(1.1); }
+        html[dir="ltr"] .item-share-btn { left: auto; right: 10px; }
 
         .add-to-cart-btn { background: var(--marine-bg); color: var(--primary-aqua); border: 2px solid var(--primary-aqua); border-radius: 10px; padding: 12px; font-weight: 800; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s ease; margin-top: auto; }
         .add-to-cart-btn:hover { background: linear-gradient(135deg, var(--primary-aqua), var(--dark-blue)); color: var(--white); border-color: transparent; box-shadow: 0 4px 12px rgba(51, 165, 182, 0.3); }
@@ -165,16 +182,20 @@
 
     <header>
         <button class="lang-switch-btn" id="lang-switch-btn" onclick="toggleLanguage()">EN</button>
+        <button class="global-share-btn" onclick="shareMenu()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span id="share-menu-text">مشاركة</span>
+        </button>
         <div class="logo-container">
-            <img src="لوقو اسماك المحيط.jpeg" alt="Asmak Al Mohit Logo" class="logo-img" id="main-logo-img" onerror="this.style.display='none'">
+            <img src="لوقو اسماك المحيط.jpeg" alt="Logo" class="logo-img" id="main-logo-img" onerror="this.style.display='none'">
         </div>
         <div class="restaurant-name">
-            <span id="name-ar">أسماك المحيط</span>
-            <span id="name-en">Asmak Al Mohit</span>
+            <span id="name-ar">اسم المطعم</span>
+            <span id="name-en">Restaurant Name</span>
             <div class="restaurant-phone">
-                <a href="https://wa.me/966535659695" class="contact-icon whatsapp-icon" target="_blank" title="واتساب"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>
-                <a href="tel:0535659695" class="phone-text">0535659695</a>
-                <a href="tel:0535659695" class="contact-icon call-icon" title="اتصال"><svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328z"/></svg></a>
+                <a href="#" class="contact-icon whatsapp-icon" target="_blank" title="واتساب"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>
+                <a href="#" class="phone-text">0000000000</a>
+                <a href="#" class="contact-icon call-icon" title="اتصال"><svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328z"/></svg></a>
             </div>
         </div>
     </header>
@@ -235,13 +256,13 @@
 
     <div id="thank-you-phase" class="thank-you-phase container">
         <div class="thank-you-card">
-            <h2 style="color:var(--dark-blue); margin-bottom:15px; font-size:26px; font-weight:800;">شكراً لاختياركم أسماك المحيط</h2>
+            <h2 style="color:var(--dark-blue); margin-bottom:15px; font-size:26px; font-weight:800;">شكراً لطلبك</h2>
             <p style="color:var(--primary-aqua); margin-bottom:25px; font-size:18px; font-weight:700;">تم ارسال طلبكم بنجاح</p>
             <div class="invoice-box" id="invoice-content">
                 <div style="text-align:center; margin-bottom:15px;">
-                    <img src="لوقو اسماك المحيط.jpeg" class="invoice-logo-small" alt="Logo" onerror="this.style.display='none'">
-                    <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:800;">أسماك المحيط</h3>
-                    <p style="font-size:13px; color:gray; font-family:sans-serif; font-weight:bold;">0535659695</p>
+                    <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" onerror="this.style.display='none'">
+                    <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:800;" id="invoice-restaurant-name"></h3>
+                    <p style="font-size:13px; color:gray; font-family:sans-serif; font-weight:bold;" id="invoice-restaurant-phone"></p>
                 </div>
                 <hr>
                 <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:8px;">
@@ -268,7 +289,7 @@
     <div class="modal-overlay" id="fish-modal-overlay">
         <div class="modal-content">
             <span class="modal-close" onclick="closeFishModal()">&times;</span>
-            <h3 class="modal-title" id="fish-modal-title">طريقة الطبخ</h3>
+            <h3 class="modal-title" id="fish-modal-title">الخيارات</h3>
             
             <div class="weight-control-group" id="weight-control-group">
                 <span class="weight-label" id="weight-label-text">الوزن المطلوب:</span>
@@ -294,27 +315,63 @@
     </div>
 
     <footer class="site-footer">
-        <p>جميع الحقوق محفوظة لمطعم أسماك المحيط © 2026</p>
+        <p id="footer-text">جميع الحقوق محفوظة © 2026</p>
         <span class="powered-by">Powered by Smart Flow</span>
     </footer>
 
     <script>
+        // 1. دليل المطاعم 
+        const restaurantsConfig = {
+            "asmak": {
+                nameAr: "أسماك المحيط",
+                nameEn: "Asmak Al Mohit",
+                phone: "0535659695",
+                logo: "لوقو اسماك المحيط.jpeg", 
+                primaryColor: "#33a5b6",
+                sheetyUrl: "https://api.sheety.co/abac8a09c57e6cc05855740b0d02ef96/asmakalmohitMenu/menu"
+            }
+            // يمكنك إضافة المزيد هنا
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentRestaurantId = urlParams.get('id') || 'asmak'; 
+        const currentRestaurant = restaurantsConfig[currentRestaurantId];
+
+        document.getElementById('name-ar').textContent = currentRestaurant.nameAr;
+        document.getElementById('name-en').textContent = currentRestaurant.nameEn;
+        document.getElementById('main-logo-img').src = currentRestaurant.logo;
+        document.getElementById('invoice-logo-img').src = currentRestaurant.logo;
+        document.getElementById('invoice-restaurant-name').textContent = currentRestaurant.nameAr;
+        document.getElementById('invoice-restaurant-phone').textContent = currentRestaurant.phone;
+        document.getElementById('footer-text').textContent = `جميع الحقوق محفوظة لمطعم ${currentRestaurant.nameAr} © 2026`;
+        document.documentElement.style.setProperty('--primary-aqua', currentRestaurant.primaryColor);
+        
+        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => {
+            link.href = `https://wa.me/966${currentRestaurant.phone.substring(1)}`;
+        });
+        document.querySelectorAll('.phone-text, a[href^="tel:"]').forEach(link => {
+            if(link.tagName === 'A') link.href = `tel:${currentRestaurant.phone}`;
+            if(link.classList.contains('phone-text')) link.textContent = currentRestaurant.phone;
+        });
+
         let menuData = { categoriesAr: [], categoriesEn: [], items: {} };
 
         const translations = {
             ar: {
-                lang: "EN", nameAr: "أسماك المحيط", nameEn: "Asmak Al Mohit", addCart: "إضافة للسلة +", cookingMethod: "طريقة الطبخ", fried: "مقلي", grilled: "مشوي", trayEmpty: "قريباً...",
+                lang: "EN", nameAr: currentRestaurant.nameAr, nameEn: currentRestaurant.nameEn, addCart: "إضافة للسلة +", cookingMethod: "يرجى اختيار الطريقة", fried: "مقلي", grilled: "مشوي", trayEmpty: "قريباً...",
                 checkoutTitle: "تأكيد طلبك", custInfoTitle: "معلومات العميل", custNamePlace: "اسم العميل*", custPhonePlace: "رقم الجوال* (05xxxxxxxx)",
                 orderNotesPlace: "ملاحظات حول الطلب...", promoPlace: "كود الخصم", btnApply: "تطبيق", btnBack: "رجوع للمنيو", btnConfirm: "تأكيد وإرسال", btnConfirmModal: "تأكيد وإضافة",
                 subtotalLabel: "الإجمالي قبل الخصم:", discountLabel: "الخصم (15%):", totalLabel: "الإجمالي النهائي:", currency: "ريال", qty: "الكمية:", emptyCart: "السلة فارغة، يرجى إضافة عناصر من المنيو.",
-                nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:"
+                nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:",
+                shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!"
             },
             en: {
-                lang: "AR", nameAr: "أسماك المحيط", nameEn: "Asmak Al Mohit", addCart: "Add +", cookingMethod: "Cooking Method", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
+                lang: "AR", nameAr: currentRestaurant.nameAr, nameEn: currentRestaurant.nameEn, addCart: "Add +", cookingMethod: "Please select an option", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
                 checkoutTitle: "Confirm Order", custInfoTitle: "Customer Info", custNamePlace: "Name*", custPhonePlace: "Phone* (05xxxxxxxx)",
                 orderNotesPlace: "Order notes...", promoPlace: "Promo code", btnApply: "Apply", btnBack: "Back", btnConfirm: "Confirm & Send", btnConfirmModal: "Add",
                 subtotalLabel: "Subtotal:", discountLabel: "Discount (15%):", totalLabel: "Grand Total:", currency: "SR", qty: "Qty:", emptyCart: "Cart is empty.",
-                nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:"
+                nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:",
+                shareMenu: "Share", linkCopied: "Link copied successfully!"
             }
         };
 
@@ -326,12 +383,12 @@
         let currentCategoryIdx = 0; 
 
         async function fetchMenuFromSheets() {
-            const sheetyUrl = "https://api.sheety.co/abac8a09c57e6cc05855740b0d02ef96/asmakalmohitMenu/menu";
+            const sheetyUrl = currentRestaurant.sheetyUrl; 
             try {
                 document.getElementById('menu-container').innerHTML = '<div class="loading-msg">جاري تحميل المنيو الحديث... ⏳</div>';
                 const response = await fetch(sheetyUrl);
                 const data = await response.json();
-                const sheetItems = data.menu;
+                const sheetItems = data.menu || data[Object.keys(data)[0]];
 
                 if (!sheetItems || sheetItems.length === 0) {
                     document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px;">المنيو فارغ حالياً.</div>';
@@ -353,7 +410,8 @@
                     menuData.items[catAr].push({
                         id: item.id ? item.id.toString() : Math.random().toString(36).substr(2, 9),
                         nameAr: item.nameAr || "", nameEn: item.nameEn || "", price: parseFloat(item.price) || 0,
-                        isFish: String(item.isFish).toUpperCase() === "TRUE", image: item.image || ""
+                        isFish: String(item.isFish).toUpperCase() === "TRUE", image: item.image || "",
+                        badge: item.badge || "" // قراءة عمود الملصق الجديد
                     });
                 });
 
@@ -364,7 +422,32 @@
                         currentCategoryIdx = parseInt(savedIdx);
                     }
                 } catch(e) {}
+
+                // Deep Linking: هل العميل ضغط على رابط وجبة معينة؟
+                const targetItemId = urlParams.get('item');
+                if (targetItemId) {
+                    for (let i = 0; i < menuData.categoriesAr.length; i++) {
+                        const catAr = menuData.categoriesAr[i];
+                        if (menuData.items[catAr].find(item => item.id === targetItemId)) {
+                            currentCategoryIdx = i; break;
+                        }
+                    }
+                }
+
                 init();
+
+                // النزول التلقائي للوجبة المطلوبة
+                if (targetItemId) {
+                    setTimeout(() => {
+                        const targetCard = document.getElementById('item-card-' + targetItemId);
+                        if (targetCard) {
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetCard.style.boxShadow = "0 0 20px var(--logo-orange)";
+                            setTimeout(() => targetCard.style.boxShadow = "0 6px 15px rgba(28, 61, 82, 0.04)", 2500);
+                        }
+                    }, 500);
+                }
+
             } catch (error) {
                 console.error("Error:", error);
                 document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو. تأكد من إعدادات الرابط.</div>';
@@ -378,6 +461,7 @@
             try { localStorage.setItem('asmakLang', lang); } catch(e) {}
             document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.getElementById('lang-switch-btn').textContent = translations[lang].lang;
+            document.getElementById('share-menu-text').textContent = translations[lang].shareMenu;
             document.getElementById('checkout-title').textContent = translations[lang].checkoutTitle;
             document.getElementById('cust-info-title').textContent = translations[lang].custInfoTitle;
             document.getElementById('customer-name').placeholder = translations[lang].custNamePlace;
@@ -398,6 +482,21 @@
         }
 
         function toggleLanguage() { setLanguage(currentLang === 'ar' ? 'en' : 'ar'); }
+
+        // وظائف المشاركة الذكية
+        function shareMenu() {
+            const url = window.location.origin + window.location.pathname + "?id=" + currentRestaurantId;
+            const title = currentLang === 'ar' ? currentRestaurant.nameAr : currentRestaurant.nameEn;
+            if (navigator.share) { navigator.share({ title: title, url: url }).catch(console.error); } 
+            else { navigator.clipboard.writeText(url); alert(translations[currentLang].linkCopied); }
+        }
+
+        function shareItem(itemId, itemName) {
+            const url = window.location.origin + window.location.pathname + "?id=" + currentRestaurantId + "&item=" + itemId;
+            const text = currentLang === 'ar' ? `جرب ${itemName} من ${currentRestaurant.nameAr}!` : `Try ${itemName} from ${currentRestaurant.nameEn}!`;
+            if (navigator.share) { navigator.share({ title: itemName, text: text, url: url }).catch(console.error); } 
+            else { navigator.clipboard.writeText(url); alert(translations[currentLang].linkCopied); }
+        }
 
         function renderCategoryNav() {
             const nav = document.getElementById('category-nav'); nav.innerHTML = '';
@@ -422,8 +521,16 @@
             } else {
                 const grid = document.createElement('div'); grid.className = 'menu-grid';
                 items.forEach(item => {
-                    const card = document.createElement('div'); card.className = 'item-card';
-                    let imageHTML = item.image ? `<div class="item-image-container"><img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" onerror="this.style.display='none'"></div>` : `<div class="item-image-container"><span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
+                    const card = document.createElement('div'); card.className = 'item-card'; 
+                    card.id = 'item-card-' + item.id; // تحديد الآي دي للنزول التلقائي
+                    
+                    let badgeHTML = item.badge ? `<span class="item-badge">${item.badge}</span>` : '';
+                    let shareHTML = `<button class="item-share-btn" onclick="event.stopPropagation(); shareItem('${item.id}', '${currentLang === 'ar' ? item.nameAr : item.nameEn}')" title="مشاركة">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    </button>`;
+                    
+                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}${shareHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}${shareHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
+                    
                     card.innerHTML = `${imageHTML}<div class="item-header"><span class="item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span><span class="item-price">${item.price} ${translations[currentLang].currency}</span></div><button class="add-to-cart-btn" onclick="addToCartClicked('${item.id}', '${categoryNameAr}')">${translations[currentLang].addCart}</button>`;
                     grid.appendChild(card);
                 });
@@ -447,7 +554,7 @@
 
         function changeFishWeight(amount) {
             let newWeight = currentFishWeight + amount;
-            if (newWeight >= 1.0) { // الحد الأدنى للأسماك هو 1 كيلو
+            if (newWeight >= 1.0) { 
                 currentFishWeight = newWeight;
                 document.getElementById('fish-weight-display').textContent = currentFishWeight.toFixed(1);
             }
@@ -462,13 +569,11 @@
             document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
 
             const weightGroup = document.getElementById('weight-control-group');
-            // إظهار الوزن فقط إذا كان اسم القسم يحتوي على كلمة أسماك أو اسماك
             if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) {
                 weightGroup.style.display = 'flex';
             } else {
                 weightGroup.style.display = 'none';
             }
-
             document.getElementById('fish-modal-overlay').style.display = 'flex';
         }
 
@@ -491,28 +596,17 @@
             const methodAr = friedChecked ? 'مقلي' : 'مشوي'; const methodEn = friedChecked ? 'Fried' : 'Grilled';
             const showWeight = document.getElementById('weight-control-group').style.display !== 'none';
             
-            let optionTextAr = methodAr;
-            let optionTextEn = methodEn;
-            let finalPrice = currentFishSelection.price;
-            let itemKey = `${currentFishSelection.id}_${methodAr}`;
+            let optionTextAr = methodAr; let optionTextEn = methodEn;
+            let finalPrice = currentFishSelection.price; let itemKey = `${currentFishSelection.id}_${methodAr}`;
 
             if (showWeight) {
-                optionTextAr += ` (${currentFishWeight} كجم)`;
-                optionTextEn += ` (${currentFishWeight} KG)`;
-                finalPrice = currentFishSelection.price * currentFishWeight;
-                itemKey += `_${currentFishWeight}`;
+                optionTextAr += ` (${currentFishWeight} كجم)`; optionTextEn += ` (${currentFishWeight} KG)`;
+                finalPrice = currentFishSelection.price * currentFishWeight; itemKey += `_${currentFishWeight}`;
             }
             
-            if (currentCart[itemKey]) {
-                currentCart[itemKey].quantity += 1;
-            } else {
-                currentCart[itemKey] = { 
-                    ...currentFishSelection, 
-                    optionAr: optionTextAr, 
-                    optionEn: optionTextEn,
-                    quantity: 1, 
-                    price: finalPrice 
-                };
+            if (currentCart[itemKey]) { currentCart[itemKey].quantity += 1; } 
+            else {
+                currentCart[itemKey] = { ...currentFishSelection, optionAr: optionTextAr, optionEn: optionTextEn, quantity: 1, price: finalPrice };
             }
             updateCartDisplay(); closeFishModal();
         }
@@ -597,8 +691,8 @@
             if (typeof html2pdf === 'undefined') { alert('جاري تحميل أداة إنشاء الفاتورة أو لا يوجد اتصال بالإنترنت.'); return; }
             const invoiceElement = document.getElementById('invoice-content'); const invoiceNumDisplay = document.getElementById('invoice-number-display').textContent;
             const invoiceNum = invoiceNumDisplay ? invoiceNumDisplay.replace('#', '') : '00000';
-            var opt = { margin: 10, filename: 'Asmak_Invoice_' + invoiceNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, allowTaint: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            html2pdf().set(opt).from(invoiceElement).save().catch(function(error) { console.error('Error:', error); alert('سيعمل تحميل الفاتورة بشكل ممتاز عند رفع الموقع على استضافة حقيقية.'); });
+            var opt = { margin: 10, filename: currentRestaurantId + '_Invoice_' + invoiceNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, allowTaint: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(invoiceElement).save().catch(function(error) { console.error('Error:', error); alert('حدث خطأ أثناء تحميل الفاتورة.'); });
         }
 
         function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; document.getElementById('thank-you-phase').style.display = 'none'; document.getElementById('menu-phase').style.display = 'block'; updateCartDisplay(); window.scrollTo(0, 0); }
@@ -618,13 +712,13 @@
 
             const tr = translations[currentLang]; const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
             
-            let invoiceNum = 1; try { let savedNum = localStorage.getItem('asmakInvoiceNum'); if (savedNum) invoiceNum = parseInt(savedNum) + 1; localStorage.setItem('asmakInvoiceNum', invoiceNum); } catch(e) {}
+            let invoiceNum = 1; try { let savedNum = localStorage.getItem(currentRestaurantId + '_InvoiceNum'); if (savedNum) invoiceNum = parseInt(savedNum) + 1; localStorage.setItem(currentRestaurantId + '_InvoiceNum', invoiceNum); } catch(e) {}
             let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
             let today = new Date(); let dateStr = today.toLocaleDateString('en-GB') + " " + today.toLocaleTimeString('en-US', {hour12: true});
             let timeOnlyStr = today.toLocaleTimeString('ar-SA'); const monthsAr = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
             let dateArabicStr = `${today.getDate()} ${monthsAr[today.getMonth()]} ${today.getFullYear()}`; 
 
-            let subTotal = 0; let message = `🐟 *طلب جديد | أسماك المحيط* 🐟\n🧾 *رقم الطلب:* #${paddedInvoiceNum}\n━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
+            let subTotal = 0; let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n🧾 *رقم الطلب:* #${paddedInvoiceNum}\n━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
 
             for (const key in currentCart) {
                 const item = currentCart[key]; const itemTotal = item.price * item.quantity; subTotal += itemTotal;
@@ -637,14 +731,14 @@
             if (currentDiscountRate > 0) { message += `💵 *الإجمالي قبل الخصم:* ${subTotal} ${tr.currency}\n📉 *الخصم (${currentDiscountRate*100}%):* -${discountAmount.toFixed(2)} ${tr.currency}\n🎟️ *كود الخصم:* ${promo.trim()}\n`; }
             message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${tr.currency}\n`;
             if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
-            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}\n⚡ (بواسطة المنيو الإلكتروني)`;
+            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}\n⚡ (بواسطة Smart Flow)`;
 
-            const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message };
+            const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId };
             const webhookUrl = "http://localhost:5678/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
 
             fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
             .then(response => { btnConfirm.classList.remove('loading'); if(!response.ok) throw new Error("Network response was not ok"); buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); })
-            .catch(error => { btnConfirm.classList.remove('loading'); const encodedMessage = encodeURIComponent(message); window.open(`https://wa.me/966535659695?text=${encodedMessage}`, '_blank'); buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); });
+            .catch(error => { btnConfirm.classList.remove('loading'); const encodedMessage = encodeURIComponent(message); window.open(`https://wa.me/966${currentRestaurant.phone.substring(1)}?text=${encodedMessage}`, '_blank'); buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); });
         }
 
         window.onload = fetchMenuFromSheets;
