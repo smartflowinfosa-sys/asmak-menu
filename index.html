@@ -166,6 +166,7 @@
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; border-top: 1px solid rgba(28, 61, 82, 0.1); color: #666; font-size: 14px; }
         .site-footer p { margin-bottom: 12px; }
         
+        /* التعديل الجذري لشعار Smart Flow.co */
         .powered-by { 
             display: inline-block; font-weight: 500; color: var(--primary-aqua); background: rgba(51, 165, 182, 0.04); padding: 5px 18px; border-radius: 20px; 
             font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; border: 1px solid rgba(51, 165, 182, 0.3); position: relative; overflow: hidden; box-shadow: 0 2px 10px rgba(51, 165, 182, 0.05);
@@ -339,7 +340,7 @@
 
     <footer class="site-footer">
         <p id="footer-text">جميع الحقوق محفوظة © 2026</p>
-        <span class="powered-by">Powered by Smart Flow</span>
+        <span class="powered-by">Powered by Smart Flow.co</span>
     </footer>
 
     <script>
@@ -504,7 +505,6 @@
                     card.className = `item-card ${item.isAvailable ? '' : 'out-of-stock'}`; 
                     
                     let badgeHTML = item.badge && item.isAvailable ? `<span class="item-badge">${item.badge}</span>` : '';
-                    // تم إزالة الملصق الأحمر المائل (outOfStockOverlay) من هنا بناءً على طلبك
                     
                     let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
                     
@@ -745,7 +745,7 @@
             if (currentDiscountRate > 0) { message += `💵 *الإجمالي قبل الخصم:* ${subTotal} ${tr.currency}\n📉 *الخصم (${currentDiscountRate*100}%):* -${discountAmount.toFixed(2)} ${tr.currency}\n🎟️ *كود الخصم:* ${promo.trim()}\n`; }
             message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${tr.currency}\n`;
             if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
-            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}\n⚡ (بواسطة Smart Flow)`;
+            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}\n⚡ (بواسطة Smart Flow.co)`;
 
             const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId };
             const webhookUrl = "http://localhost:5678/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
