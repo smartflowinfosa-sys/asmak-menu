@@ -161,7 +161,6 @@
         .invoice-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: repeating-linear-gradient(to right, var(--primary-aqua) 0, var(--primary-aqua) 10px, transparent 10px, transparent 20px); border-radius: 12px 12px 0 0; }
         .invoice-box hr { border: 0; border-top: 1px dashed var(--gray-light); margin: 15px 0; }
         
-        /* تعديل الشعار ليتوسط الفاتورة بمسافات مناسبة */
         .invoice-logo-small { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block; border: 2px solid var(--primary-aqua); box-shadow: 0 4px 10px rgba(28,61,82,0.1); }
         
         .btn-download-pdf { background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); color: var(--white); border: none; border-radius: 12px; padding: 18px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(28,61,82,0.2); }
@@ -273,14 +272,17 @@
             <h2 style="color:var(--dark-blue); margin-bottom:15px; font-size:26px; font-weight:800;">شكراً لطلبك</h2>
             <p style="color:var(--primary-aqua); margin-bottom:25px; font-size:18px; font-weight:700;">تم ارسال طلبكم بنجاح</p>
             <div class="invoice-box" id="invoice-content">
-                
                 <div style="text-align:center; margin-bottom:15px;">
                     <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:800;" id="invoice-restaurant-name"></h3>
                     <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" crossorigin="anonymous" onerror="this.style.display='none'">
                     <p style="font-size:13px; color:gray; font-family:sans-serif; font-weight:bold;" id="invoice-restaurant-phone"></p>
                 </div>
-                
                 <hr>
+                <div style="display:flex; justify-content:center; align-items:center; background:rgba(51, 165, 182, 0.1); padding:10px; border-radius:10px; margin-bottom:15px; border:1px solid var(--primary-aqua);">
+                    <strong style="font-size:18px;">رقم الطلب (اليومي): </strong>
+                    <span id="daily-order-num-display" style="font-size:24px; color:var(--logo-orange); font-weight:900; margin-right:10px; font-family:sans-serif;"></span>
+                </div>
+
                 <div style="display:flex; gap:10px; font-size:15px; margin-bottom:8px;">
                     <strong>رقم الفاتورة:</strong> <span id="invoice-number-display" style="color:var(--logo-orange); font-family:sans-serif; font-weight:bold;"></span>
                 </div>
@@ -291,7 +293,6 @@
                     <strong>العميل:</strong> <span id="invoice-customer-name" style="font-weight:700; color:var(--dark-blue);"></span>
                 </div>
                 <hr>
-                
                 <div id="invoice-items-list" style="font-size:15px; line-height:1.8; font-weight:500;"></div>
                 <hr>
                 <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:800;">
@@ -376,6 +377,12 @@
         });
 
         let menuData = { categoriesAr: [], categoriesEn: [], items: {} };
+        let currentLang = 'ar'; 
+        let currentCart = {}; 
+        let currentFishSelection = null; 
+        let currentFishWeight = 1.0; 
+        let currentDiscountRate = 0; 
+        let currentCategoryIdx = 0; 
 
         const translations = {
             ar: {
@@ -396,13 +403,6 @@
             }
         };
 
-        let currentLang = 'ar'; 
-        let currentCart = {}; 
-        let currentFishSelection = null; 
-        let currentFishWeight = 1.0; 
-        let currentDiscountRate = 0; 
-        let currentCategoryIdx = 0; 
-
         async function fetchMenuFromSheets() {
             const sheetyUrl = currentRestaurant.sheetyUrl; 
             try {
@@ -410,22 +410,17 @@
                 const response = await fetch(sheetyUrl);
                 const data = await response.json();
                 const sheetItems = data.menu || data[Object.keys(data)[0]];
-
                 if (!sheetItems || sheetItems.length === 0) {
                     document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px;">المنيو فارغ حالياً.</div>'; return;
                 }
-
                 menuData = { categoriesAr: [], categoriesEn: [], items: {} };
-
                 sheetItems.forEach(item => {
                     const catAr = item.category || "غير مصنف"; const catEn = item.categoryEn || catAr; 
                     if (!menuData.items[catAr]) {
                         menuData.items[catAr] = [];
                         if (!menuData.categoriesAr.includes(catAr)) { menuData.categoriesAr.push(catAr); menuData.categoriesEn.push(catEn); }
                     }
-                    
                     let isAvailable = item.hasOwnProperty('available') ? (item.available === true || String(item.available).toUpperCase() === 'TRUE') : true;
-
                     menuData.items[catAr].push({
                         id: item.id ? item.id.toString() : Math.random().toString(36).substr(2, 9),
                         nameAr: item.nameAr || "", nameEn: item.nameEn || "", price: parseFloat(item.price) || 0,
@@ -433,7 +428,6 @@
                         isAvailable: isAvailable
                     });
                 });
-
                 try {
                     currentLang = localStorage.getItem('asmakLang') || 'ar'; 
                     let savedIdx = localStorage.getItem('asmakCategoryIdx');
@@ -441,7 +435,7 @@
                 } catch(e) {}
                 init();
             } catch (error) {
-                console.error("Error:", error); document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو. تأكد من إعدادات الرابط.</div>';
+                document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو. تأكد من إعدادات الرابط.</div>';
             }
         }
 
@@ -508,15 +502,11 @@
                 items.forEach(item => {
                     const card = document.createElement('div'); 
                     card.className = `item-card ${item.isAvailable ? '' : 'out-of-stock'}`; 
-                    
                     let badgeHTML = item.badge && item.isAvailable ? `<span class="item-badge">${item.badge}</span>` : '';
-                    
                     let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}<span style="color:#ddd;font-size:30px;">🍽️</span></div>`;
-                    
                     let btnHTML = item.isAvailable 
                         ? `<button class="add-to-cart-btn" onclick="addToCartClicked(event, '${item.id}', '${categoryNameAr}')">${translations[currentLang].addCart}</button>`
                         : `<button class="add-to-cart-btn disabled-btn">${translations[currentLang].outOfStock}</button>`;
-
                     card.innerHTML = `${imageHTML}<div class="item-header"><span class="item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span><span class="item-price">${item.price} ${translations[currentLang].currency}</span></div>${btnHTML}`;
                     grid.appendChild(card);
                 });
@@ -535,23 +525,18 @@
         function flyToCartAnimation(event, imgSrc) {
             if(!event || !imgSrc) return;
             if (navigator.vibrate) { navigator.vibrate(50); }
-
             const cartIcon = document.getElementById('cart-icon-dest');
             const flyingImg = document.createElement('img');
             flyingImg.src = imgSrc; flyingImg.className = 'flying-img';
-
             const startX = event.clientX; const startY = event.clientY;
             const targetRect = cartIcon.getBoundingClientRect();
             const targetX = targetRect.left + (targetRect.width / 2) - 30;
             const targetY = targetRect.top + (targetRect.height / 2) - 30;
-
             flyingImg.style.left = startX + 'px'; flyingImg.style.top = startY + 'px';
             document.body.appendChild(flyingImg);
             flyingImg.getBoundingClientRect(); 
-
             flyingImg.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.1)`;
             flyingImg.style.opacity = '0.5';
-
             setTimeout(() => {
                 flyingImg.remove(); cartIcon.style.transform = 'scale(1.4)';
                 setTimeout(() => cartIcon.style.transform = 'scale(1)', 200);
@@ -580,7 +565,6 @@
             document.getElementById('fish-modal-title').textContent = `${currentLang === 'ar' ? item.nameAr : item.nameEn}`;
             document.getElementById('fried-input').checked = false; document.getElementById('grilled-input').checked = false;
             document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
-
             const weightGroup = document.getElementById('weight-control-group');
             if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) { weightGroup.style.display = 'flex'; } 
             else { weightGroup.style.display = 'none'; }
@@ -600,23 +584,17 @@
             if (!currentFishSelection) return;
             const friedChecked = document.getElementById('fried-input').checked;
             const grilledChecked = document.getElementById('grilled-input').checked;
-
             if (!friedChecked && !grilledChecked) { alert(translations[currentLang].cookingMethod); return; }
-
             const methodAr = friedChecked ? 'مقلي' : 'مشوي'; const methodEn = friedChecked ? 'Fried' : 'Grilled';
             const showWeight = document.getElementById('weight-control-group').style.display !== 'none';
-            
             let optionTextAr = methodAr; let optionTextEn = methodEn;
             let finalPrice = currentFishSelection.price; let itemKey = `${currentFishSelection.id}_${methodAr}`;
-
             if (showWeight) {
                 optionTextAr += ` (${currentFishWeight} كجم)`; optionTextEn += ` (${currentFishWeight} KG)`;
                 finalPrice = currentFishSelection.price * currentFishWeight; itemKey += `_${currentFishWeight}`;
             }
-            
             if (currentCart[itemKey]) { currentCart[itemKey].quantity += 1; } 
             else { currentCart[itemKey] = { ...currentFishSelection, optionAr: optionTextAr, optionEn: optionTextEn, quantity: 1, price: finalPrice }; }
-            
             updateCartDisplay(); 
             if(currentFishSelection.image && tempEvent) { flyToCartAnimation(tempEvent, currentFishSelection.image); }
             closeFishModal();
@@ -662,26 +640,13 @@
         function renderCartItems() {
             const list = document.getElementById('checkout-items-list'); list.innerHTML = '';
             let subTotal = 0; let isEmpty = true;
-
             for (const key in currentCart) {
                 isEmpty = false; const item = currentCart[key]; const itemTotal = item.price * item.quantity; subTotal += itemTotal;
                 const itemDiv = document.createElement('div'); itemDiv.className = 'checkout-item';
-                itemDiv.innerHTML = `
-                    <button class="remove-item-btn" onclick="removeFromCart('${key}')">&times;</button>
-                    <div class="checkout-item-details">
-                        <span class="checkout-item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span>
-                        ${item.optionAr ? `<span class="checkout-item-sub">(${currentLang === 'ar' ? item.optionAr : item.optionEn})</span>` : ''}
-                    </div>
-                    <div class="checkout-item-price-group">
-                        <div class="checkout-item-qty">${translations[currentLang].qty} ${item.quantity}</div>
-                        <div class="checkout-item-total">${itemTotal} ${translations[currentLang].currency}</div>
-                    </div>
-                `;
+                itemDiv.innerHTML = `<button class="remove-item-btn" onclick="removeFromCart('${key}')">&times;</button><div class="checkout-item-details"><span class="checkout-item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span>${item.optionAr ? `<span class="checkout-item-sub">(${currentLang === 'ar' ? item.optionAr : item.optionEn})</span>` : ''}</div><div class="checkout-item-price-group"><div class="checkout-item-qty">${translations[currentLang].qty} ${item.quantity}</div><div class="checkout-item-total">${itemTotal} ${translations[currentLang].currency}</div></div>`;
                 list.appendChild(itemDiv);
             }
-
             if (isEmpty) { list.innerHTML = `<p class="empty-section-msg">${translations[currentLang].emptyCart}</p>`; setTimeout(backToMenu, 1500); }
-
             let discountAmount = subTotal * currentDiscountRate; let finalTotal = subTotal - discountAmount;
             document.getElementById('subtotal-price').textContent = `${subTotal} ${translations[currentLang].currency}`;
             const discountRow = document.getElementById('discount-row');
@@ -689,7 +654,8 @@
             document.getElementById('final-total-price').textContent = `${finalTotal.toFixed(2)} ${translations[currentLang].currency}`;
         }
 
-        function buildAndShowInvoice(finalTotal, nameInput, paddedInvoiceNum, dateStr) {
+        function buildAndShowInvoice(finalTotal, nameInput, paddedInvoiceNum, dateStr, dailyPaddedNum) {
+            document.getElementById('daily-order-num-display').textContent = dailyPaddedNum;
             document.getElementById('invoice-number-display').textContent = "#" + paddedInvoiceNum;
             document.getElementById('invoice-date-display').textContent = dateStr;
             document.getElementById('invoice-customer-name').textContent = nameInput;
@@ -707,19 +673,14 @@
         }
 
         function downloadPDF() {
-            if (typeof html2pdf === 'undefined') { alert('جاري تحميل أداة إنشاء الفاتورة أو لا يوجد اتصال بالإنترنت.'); return; }
             const invoiceElement = document.getElementById('invoice-content'); 
-            const invoiceNumDisplay = document.getElementById('invoice-number-display').textContent;
-            const invoiceNum = invoiceNumDisplay ? invoiceNumDisplay.replace('#', '') : '00000';
-            
+            const dailyNum = document.getElementById('daily-order-num-display').textContent;
             var opt = { 
-                margin: [10, 10, 10, 10], 
-                filename: currentRestaurantId + '_Invoice_' + invoiceNum + '.pdf', 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
+                margin: [10, 10, 10, 10], filename: 'Asmak_Order_' + dailyNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
-            html2pdf().set(opt).from(invoiceElement).save().catch(function(error) { console.error('Error:', error); alert('حدث خطأ أثناء تحميل الفاتورة.'); });
+            html2pdf().set(opt).from(invoiceElement).save();
         }
 
         function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; backToMenu(); updateCartDisplay(); window.scrollTo(0, 0); }
@@ -731,58 +692,78 @@
 
             nameInput.classList.remove('error'); phoneInput.classList.remove('error'); nameError.style.display = 'none'; phoneError.style.display = 'none';
             let isValid = true;
-            if (nameInput.value.trim() === "") { nameInput.classList.add('error'); nameError.style.display = 'block'; nameError.textContent = translations[currentLang].nameError; isValid = false; }
+            if (nameInput.value.trim() === "") { nameInput.classList.add('error'); nameError.style.display = 'block'; isValid = false; }
             const phoneRegex = /^05\d{8}$/;
-            if (!phoneRegex.test(phoneInput.value.trim())) { phoneInput.classList.add('error'); phoneError.style.display = 'block'; phoneError.textContent = translations[currentLang].phoneError; isValid = false; }
-            if (Object.keys(currentCart).length === 0) { alert(translations[currentLang].emptyCart); backToMenu(); return; }
+            if (!phoneRegex.test(phoneInput.value.trim())) { phoneInput.classList.add('error'); phoneError.style.display = 'block'; isValid = false; }
+            if (Object.keys(currentCart).length === 0) { backToMenu(); return; }
             if (!isValid) return;
 
-            const tr = translations[currentLang]; const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
+            const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
             
-            let invoiceNum = 1; try { let savedNum = localStorage.getItem(currentRestaurantId + '_InvoiceNum'); if (savedNum) invoiceNum = parseInt(savedNum) + 1; localStorage.setItem(currentRestaurantId + '_InvoiceNum', invoiceNum); } catch(e) {}
+            // --- منطق عدادات الفاتورة ---
+            // 1. رقم الفاتورة العام (ثابت ويبدأ من رقم محدد)
+            let invoiceNum = 1000; // يمكنك تغيير هذا الرقم للبداية الرسمية
+            try { 
+                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum'); 
+                if (savedInvoiceNum) invoiceNum = parseInt(savedInvoiceNum) + 1; 
+                localStorage.setItem(currentRestaurantId + '_InvNum', invoiceNum); 
+            } catch(e) {}
             let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
-            let today = new Date(); let dateStr = today.toLocaleDateString('en-GB') + " " + today.toLocaleTimeString('en-US', {hour12: true});
-            
-            let timeOnlyStr = today.toLocaleTimeString('en-US').replace('AM', 'ص').replace('PM', 'م');
-            
+
+            // 2. رقم الطلب اليومي (يصفر كل يوم)
+            let dailyOrderNum = 1;
+            let todayDate = new Date().toLocaleDateString('en-US'); // للتحقق من اليوم فقط
+            try {
+                let lastDate = localStorage.getItem(currentRestaurantId + '_LastDate');
+                let savedDailyNum = localStorage.getItem(currentRestaurantId + '_DailyNum');
+                
+                if (lastDate === todayDate) {
+                    if (savedDailyNum) dailyOrderNum = parseInt(savedDailyNum) + 1;
+                } else {
+                    dailyOrderNum = 1; // يوم جديد، يصفر العداد
+                    localStorage.setItem(currentRestaurantId + '_LastDate', todayDate);
+                }
+                localStorage.setItem(currentRestaurantId + '_DailyNum', dailyOrderNum);
+            } catch(e) {}
+            let dailyPaddedNum = String(dailyOrderNum).padStart(2, '0');
+            // ---------------------------
+
+            let today = new Date(); 
+            let dateStr = today.toLocaleDateString('en-GB') + " " + today.toLocaleTimeString('en-US', {hour12: true});
+            let timeOnlyStr = today.toLocaleTimeString('en-US', {hour12: true});
             const monthsAr = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
             let dateArabicStr = `${today.getDate()} ${monthsAr[today.getMonth()]} ${today.getFullYear()}`; 
 
-            let subTotal = 0; let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n🧾 *رقم الطلب:* #${paddedInvoiceNum}\n━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
+            let subTotal = 0; 
+            let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n`;
+            message += `🔢 *رقم الطلب اليومي:* ${dailyPaddedNum}\n`;
+            message += `🧾 *رقم الفاتورة:* #${paddedInvoiceNum}\n`;
+            message += `━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
 
             for (const key in currentCart) {
                 const item = currentCart[key]; const itemTotal = item.price * item.quantity; subTotal += itemTotal;
                 let nameStr = currentLang === 'ar' ? item.nameAr : item.nameEn; let optionStr = item.optionAr ? ` (${currentLang === 'ar' ? item.optionAr : item.optionEn})` : '';
-                message += `▫️ ${item.quantity}x ${nameStr}${optionStr} = ${itemTotal} ${tr.currency}\n`;
+                message += `▫️ ${item.quantity}x ${nameStr}${optionStr} = ${itemTotal} ${translations[currentLang].currency}\n`;
             }
 
             let discountAmount = subTotal * currentDiscountRate; let finalTotal = subTotal - discountAmount;
             message += `━━━━━━━━━━━━━━━\n`;
-            if (currentDiscountRate > 0) { message += `💵 *الإجمالي قبل الخصم:* ${subTotal} ${tr.currency}\n📉 *الخصم (${currentDiscountRate*100}%):* -${discountAmount.toFixed(2)} ${tr.currency}\n🎟️ *كود الخصم:* ${promo.trim()}\n`; }
-            message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${tr.currency}\n`;
+            if (currentDiscountRate > 0) { message += `💵 *الإجمالي:* ${subTotal}\n📉 *الخصم:* -${discountAmount.toFixed(2)}\n`; }
+            message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${translations[currentLang].currency}\n`;
             if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
-            
-            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}`;
+            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *الوقت:* ${timeOnlyStr}`;
 
-            const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId };
-            
+            const payload = { dailyOrderNum: dailyPaddedNum, invoiceNum: paddedInvoiceNum, customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message };
             const webhookUrl = "https://intercivic-athetosic-bristol.ngrok-free.dev/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
 
-            fetch(webhookUrl, { 
-                method: "POST", 
-                headers: { 
-                    "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning": "true" 
-                }, 
-                body: JSON.stringify(payload) 
-            })
-            .then(response => { 
+            fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify(payload) })
+            .then(() => { 
                 btnConfirm.classList.remove('loading'); 
-                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
+                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr, dailyPaddedNum); 
             })
-            .catch(error => { 
+            .catch(() => { 
                 btnConfirm.classList.remove('loading'); 
-                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
+                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr, dailyPaddedNum); 
             });
         }
 
