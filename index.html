@@ -279,12 +279,13 @@
                 </div>
                 <hr>
                 
-                <div style="display:flex; justify-content:center; align-items:center; background:rgba(51, 165, 182, 0.1); padding:10px; border-radius:10px; margin-bottom:15px; border:1px solid var(--primary-aqua);">
+                <div style="display:flex; justify-content:center; align-items:center; gap: 15px; background:rgba(51, 165, 182, 0.1); padding:10px; border-radius:10px; margin-bottom:15px; border:1px solid var(--primary-aqua);">
+                    <strong style="font-size:22px; color:var(--dark-blue);">رقم الطلب:</strong>
                     <span id="daily-order-num-display" style="font-size:32px; color:var(--logo-orange); font-weight:900; font-family:sans-serif; letter-spacing: 2px;"></span>
                 </div>
 
                 <div style="display:flex; gap:10px; font-size:15px; margin-bottom:8px;">
-                    <strong>رقم الفاتورة:</strong> <span id="invoice-number-display" style="color:var(--logo-orange); font-family:sans-serif; font-weight:bold;"></span>
+                    <strong>الفاتورة:</strong> <span id="invoice-number-display" style="color:var(--logo-orange); font-family:sans-serif; font-weight:bold;"></span>
                 </div>
                 <div style="display:flex; gap:10px; font-size:15px; margin-bottom:8px;">
                     <strong>التاريخ:</strong> <span id="invoice-date-display" dir="ltr" style="font-family:sans-serif; display:inline-block;"></span>
@@ -700,14 +701,14 @@
 
             const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
             
-            // --- عداد رقم الفاتورة يبدأ من 00001 ---
+            // --- عداد رقم الفاتورة يبدأ من 00001 (استخدام مفتاح جديد لضمان البداية من 1) ---
             let invoiceNum = 1; 
             try { 
-                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_V2'); 
+                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Final'); 
                 if (savedInvoiceNum) {
                     invoiceNum = parseInt(savedInvoiceNum) + 1; 
                 }
-                localStorage.setItem(currentRestaurantId + '_InvNum_V2', invoiceNum); 
+                localStorage.setItem(currentRestaurantId + '_InvNum_Final', invoiceNum); 
             } catch(e) {}
             let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
 
@@ -736,8 +737,8 @@
 
             let subTotal = 0; 
             let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n`;
-            message += `🔢 *${dailyPaddedNum}*\n`;
-            message += `🧾 *رقم الفاتورة:* #${paddedInvoiceNum}\n`;
+            message += `🔢 *رقم الطلب:* ${dailyPaddedNum}\n`;
+            message += `🧾 *الفاتورة:* #${paddedInvoiceNum}\n`;
             message += `━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
 
             for (const key in currentCart) {
