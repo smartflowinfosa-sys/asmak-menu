@@ -429,10 +429,13 @@
                         isAvailable: isAvailable
                     });
                 });
+                
+                // جعل قسم "التباسي" هو الافتراضي عند الدخول للمنيو
+                let tabasiIdx = menuData.categoriesAr.findIndex(cat => cat.includes("تباسي") || cat.includes("التباسي"));
+                currentCategoryIdx = tabasiIdx !== -1 ? tabasiIdx : 0;
+
                 try {
                     currentLang = localStorage.getItem('asmakLang') || 'ar'; 
-                    let savedIdx = localStorage.getItem('asmakCategoryIdx');
-                    if (savedIdx !== null && savedIdx < menuData.categoriesAr.length) { currentCategoryIdx = parseInt(savedIdx); }
                 } catch(e) {}
                 init();
             } catch (error) {
@@ -701,18 +704,16 @@
 
             const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
             
-            // --- عداد رقم الفاتورة يبدأ من 00001 (استخدام مفتاح جديد لضمان البداية من 1) ---
             let invoiceNum = 1; 
             try { 
-                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Final'); 
+                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Final_V3'); 
                 if (savedInvoiceNum) {
                     invoiceNum = parseInt(savedInvoiceNum) + 1; 
                 }
-                localStorage.setItem(currentRestaurantId + '_InvNum_Final', invoiceNum); 
+                localStorage.setItem(currentRestaurantId + '_InvNum_Final_V3', invoiceNum); 
             } catch(e) {}
             let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
 
-            // --- عداد رقم الطلب اليومي ---
             let dailyOrderNum = 1;
             let todayDate = new Date().toLocaleDateString('en-US'); 
             try {
