@@ -430,8 +430,8 @@
                     });
                 });
                 
-                // جعل قسم "التباسي" هو الافتراضي عند الدخول للمنيو
-                let tabasiIdx = menuData.categoriesAr.findIndex(cat => cat.includes("تباسي") || cat.includes("التباسي"));
+                // التعديل هنا: البحث عن "تباسي الجمعات" لتكون هي القسم المفتوح افتراضياً
+                let tabasiIdx = menuData.categoriesAr.findIndex(cat => cat.includes("تباسي الجمعات") || cat.includes("تباسي"));
                 currentCategoryIdx = tabasiIdx !== -1 ? tabasiIdx : 0;
 
                 try {
