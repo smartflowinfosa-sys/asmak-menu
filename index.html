@@ -157,7 +157,7 @@
         .invoice-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: repeating-linear-gradient(to right, var(--primary-aqua) 0, var(--primary-aqua) 10px, transparent 10px, transparent 20px); border-radius: 12px 12px 0 0; }
         .invoice-box hr { border: 0; border-top: 1px dashed var(--gray-light); margin: 15px 0; }
         .invoice-logo-small { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid var(--primary-aqua); box-shadow: 0 4px 10px rgba(28,61,82,0.1); }
-        .btn-download-pdf { background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); color: var(--white); border: none; border-radius: 12px; padding: 18px; width: 100%; font-size: 18px; font-weight: 800; cursor: margin-bottom: 15px; box-shadow: 0 6px 15px rgba(28,61,82,0.2); }
+        .btn-download-pdf { background: linear-gradient(135deg, var(--dark-blue), var(--primary-aqua)); color: var(--white); border: none; border-radius: 12px; padding: 18px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(28,61,82,0.2); }
 
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; border-top: 1px solid rgba(28, 61, 82, 0.1); color: #666; font-size: 14px; }
         .site-footer p { margin-bottom: 12px; }
@@ -752,13 +752,22 @@
             message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${tr.currency}\n`;
             if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
             
-            // تم إزالة عبارة (بواسطة Smart Flow.co) من رسالة الواتساب تماماً بناءً على طلبك
+            // تم إزالة عبارة (بواسطة Smart Flow.co) من رسالة الواتساب تماماً
             message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}`;
 
             const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId };
-            const webhookUrl = "http://localhost:5678/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
+            
+            // هنا تضع الرابط الخاص بـ ngrok الذي يعمل من الجوال:
+            const webhookUrl = "https://intercivic-athetosic-bristol.ngrok-free.dev/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
 
-            fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+            fetch(webhookUrl, { 
+                method: "POST", 
+                headers: { 
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true" 
+                }, 
+                body: JSON.stringify(payload) 
+            })
             .then(response => { 
                 btnConfirm.classList.remove('loading'); 
                 buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
