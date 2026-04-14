@@ -76,7 +76,7 @@
         .item-card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: 0 6px 15px rgba(28, 61, 82, 0.04); display: flex; flex-direction: column; transition: all 0.3s ease; border: 1px solid rgba(51, 165, 182, 0.05); animation: fadeIn 0.5s ease-out forwards; position: relative; }
         .item-card:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(51, 165, 182, 0.15); border-color: rgba(51, 165, 182, 0.3); }
         
-        .item-card.out-of-stock { opacity: 0.7; pointer-events: none; } 
+        .item-card.out-of-stock { opacity: 0.6; pointer-events: none; } 
         .item-card.out-of-stock .item-image { filter: grayscale(100%); } 
 
         .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
@@ -551,7 +551,7 @@
             const item = menuData.items[categoryNameAr].find(i => i.id === itemId.toString());
             if (!item) return;
             if (item.isFish) openFishModal(item, categoryNameAr, event); 
-            else { addToCart(item); if(item.image) flyToCartAnimation(event, item.image); }
+            else { addToCart(item); if(item.image) flyToCartAnimation(event, image); }
         }
 
         function changeFishWeight(amount) {
@@ -701,7 +701,6 @@
             const invoiceNumDisplay = document.getElementById('invoice-number-display').textContent;
             const invoiceNum = invoiceNumDisplay ? invoiceNumDisplay.replace('#', '') : '00000';
             
-            // إعدادات قوية لمنع ظهور الصفحة البيضاء في الجوالات (تحديد موقع الالتقاط بدقة)
             var opt = { 
                 margin: [10, 10, 10, 10], 
                 filename: currentRestaurantId + '_Invoice_' + invoiceNum + '.pdf', 
@@ -750,17 +749,15 @@
             if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
             message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *وقت الطلب:* ${timeOnlyStr}\n⚡ (بواسطة Smart Flow.co)`;
 
-            const payload = { customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId };
-            const webhookUrl = "http://localhost:5678/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
+            const webhookUrl = "https://intercivic-athetosic-bristol.ngrok-free.dev/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
 
-            fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+            fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message, restaurantId: currentRestaurantId }) })
             .then(response => { 
                 btnConfirm.classList.remove('loading'); 
                 buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
             })
             .catch(error => { 
                 btnConfirm.classList.remove('loading'); 
-                // تم إزالة كود فتح الواتساب الإجباري (window.open) لتجنب الحظر من متصفح الجوال
                 buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr); 
             });
         }
