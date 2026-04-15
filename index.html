@@ -93,29 +93,23 @@
         .item-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 162, 184, 0.15); border-color: var(--primary-aqua); background: rgba(255, 255, 255, 0.95);}
         .item-card.out-of-stock { opacity: 0.5; pointer-events: none; filter: grayscale(100%); } 
 
-        /* 🔥 الصندوق الذكي لاحتواء الصور (تحديث تطبيقات التوصيل) 🔥 */
+        /* 🔥 تعديل إطار الصورة: تملأ الفراغ بالكامل مع تقليل الارتفاع لعمل توازن 🔥 */
         .item-image-container { 
             width: 100%; 
-            height: 200px; 
+            height: 170px; /* تم تصغير الارتفاع لكي لا يقص الكثير من أطراف الوجبة */
             border-radius: 14px; 
             overflow: hidden; 
             margin-bottom: 15px; 
-            background: #ffffff; /* خلفية بيضاء تدمج الصور المفرغة أو ذات المقاسات المختلفة */
+            background: var(--aqua-light); 
             position: relative; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px; /* منطقة آمنة لمنع التصاق الوجبة بالأطراف */
-            box-shadow: inset 0 0 15px rgba(0, 162, 184, 0.05); /* إطار مائي داخلي ناعم */
         }
         .item-image { 
             width: 100%; 
             height: 100%; 
-            object-fit: contain; /* يضمن إظهار كامل الطبق دون أي قص */
-            object-position: center; /* يضع الطبق في المنتصف تماماً */
+            object-fit: cover; /* تملأ الإطار بالكامل بدون تمطط وتلغي الفراغات البيضاء */
+            object-position: center; 
             opacity: 0.95; 
             transition: transform 0.5s ease, opacity 0.5s;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.08)); /* يعطي بروز 3D للوجبة */
         }
         .item-card:hover .item-image { transform: scale(1.05); opacity: 1;}
         
@@ -219,7 +213,7 @@
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; color: var(--text-muted); font-size: 13px; font-weight: 700; position: relative; z-index: 10;}
         .powered-by { display: inline-block; font-weight: 800; color: var(--aqua-dark); background: var(--white); border: 1px solid var(--glass-border); padding: 8px 22px; border-radius: 20px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; position: relative; overflow: hidden; white-space: nowrap; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,162,184,0.1);}
 
-        /* الشريط السفلي الأبيض الناصع */
+        /* الشريط السفلي */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             display: flex; justify-content: space-around; align-items: center; padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); 
@@ -766,15 +760,16 @@
 
             const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
             
-            // عداد الفاتورة يبدأ من 00001 (مفتاح الذاكرة للنسخة التركوازية)
+            // عداد الفاتورة
             let invoiceNum = 1; 
             try { 
-                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Turq'); 
+                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Turq2'); 
                 if (savedInvoiceNum) { invoiceNum = parseInt(savedInvoiceNum) + 1; }
-                localStorage.setItem(currentRestaurantId + '_InvNum_Turq', invoiceNum); 
+                localStorage.setItem(currentRestaurantId + '_InvNum_Turq2', invoiceNum); 
             } catch(e) {}
             let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
 
+            // العداد اليومي
             let dailyOrderNum = 1;
             let todayDate = new Date().toLocaleDateString('en-US'); 
             try {
