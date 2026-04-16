@@ -221,7 +221,9 @@
         .invoice-box { background: #ffffff; color: var(--dark-blue); border: 2px dashed var(--primary-aqua); padding: 25px; margin: 25px 0; border-radius: 16px; text-align: right; direction: rtl; position: relative; box-shadow: inset 0 0 20px rgba(0,162,184,0.05);}
         .invoice-box hr { border: 0; border-top: 1px dashed #ccc; margin: 18px 0; }
         
-        .invoice-logo-small { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px auto; display: block; border: 2px solid var(--primary-aqua); }
+        /* تعديل CSS لضمان ظهور اللوقو في الـ PDF */
+        .invoice-logo-container { width: 85px; height: 85px; margin: 0 auto 10px auto; display: block; border-radius: 50%; border: 2px solid var(--primary-aqua); overflow: hidden; background: white;}
+        .invoice-logo-small { width: 100%; height: 100%; object-fit: cover; }
         
         .btn-download-pdf { background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); border: none; border-radius: 16px; padding: 18px; width: 100%; font-size: 18px; font-weight: 900; cursor: pointer; margin-bottom: 15px; box-shadow: var(--aqua-glow); transition: transform 0.2s;}
         .btn-download-pdf:hover { transform: translateY(-2px); }
@@ -340,7 +342,9 @@
             
             <div class="invoice-box" id="invoice-content">
                 <div style="text-align:center; margin-bottom:15px;">
-                    <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" crossorigin="anonymous" onerror="this.style.display='none'">
+                    <div class="invoice-logo-container">
+                        <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" onerror="this.style.display='none'">
+                    </div>
                     <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:900;" id="invoice-restaurant-name"></h3>
                     <p style="font-size:14px; color:gray; font-family:sans-serif; font-weight:bold;" id="invoice-restaurant-phone"></p>
                 </div>
