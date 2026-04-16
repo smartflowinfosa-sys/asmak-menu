@@ -221,12 +221,13 @@
         .invoice-box { background: #ffffff; color: var(--dark-blue); border: 2px dashed var(--primary-aqua); padding: 25px; margin: 25px 0; border-radius: 16px; text-align: right; direction: rtl; position: relative; box-shadow: inset 0 0 20px rgba(0,162,184,0.05);}
         .invoice-box hr { border: 0; border-top: 1px dashed #ccc; margin: 18px 0; }
         
-        /* تعديل CSS لضمان ظهور اللوقو في الـ PDF */
-        .invoice-logo-container { width: 85px; height: 85px; margin: 0 auto 10px auto; display: block; border-radius: 50%; border: 2px solid var(--primary-aqua); overflow: hidden; background: white;}
+        /* تنسيق اللوقو الجديد داخل الفاتورة لضمان ظهوره في الـ PDF */
+        .invoice-logo-container { width: 85px; height: 85px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary-aqua); overflow: hidden; background: white;}
         .invoice-logo-small { width: 100%; height: 100%; object-fit: cover; }
         
         .btn-download-pdf { background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); border: none; border-radius: 16px; padding: 18px; width: 100%; font-size: 18px; font-weight: 900; cursor: pointer; margin-bottom: 15px; box-shadow: var(--aqua-glow); transition: transform 0.2s;}
         .btn-download-pdf:hover { transform: translateY(-2px); }
+        .btn-download-pdf:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; color: var(--text-muted); font-size: 13px; font-weight: 700; position: relative; z-index: 10;}
         .powered-by { display: inline-block; font-weight: 800; color: var(--aqua-dark); background: var(--white); border: 1px solid var(--glass-border); padding: 8px 22px; border-radius: 20px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; position: relative; overflow: hidden; white-space: nowrap; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,162,184,0.1);}
@@ -377,7 +378,7 @@
                 </div>
             </div>
 
-            <button class="btn-download-pdf" onclick="downloadPDF()">تحميل الفاتورة PDF</button>
+            <button class="btn-download-pdf" id="pdf-download-btn" onclick="downloadPDF()">تحميل الفاتورة PDF</button>
             <button class="back-to-menu-btn" style="width:100%; border:2px solid var(--primary-aqua); background:transparent;" onclick="resetApp()">العودة للمنيو / طلب جديد</button>
         </div>
     </div>
@@ -797,15 +798,44 @@
             document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('thank-you-phase').style.display = 'block'; window.scrollTo(0, 0); 
         }
 
+        /* ==================================================
+        وظيفة تحميل الـ PDF المحدثة مع حماية من الأخطاء
+        ==================================================
+        */
         function downloadPDF() {
+            // خطة طوارئ في حال حظر المتصفح لمكتبة التحميل
+            if (typeof window.html2pdf === 'undefined') {
+                alert(currentLang === 'ar' ? 'أداة تحميل الـ PDF محظورة في متصفحك. سيتم فتح نافذة الطباعة بدلاً من ذلك.' : 'PDF tool is blocked. Opening print dialog instead.');
+                window.print();
+                return;
+            }
+
+            const btn = document.getElementById('pdf-download-btn');
+            const originalText = btn.textContent;
+            btn.textContent = currentLang === 'ar' ? 'جاري تجهيز الملف...' : 'Preparing PDF...';
+            btn.disabled = true;
+
             const invoiceElement = document.getElementById('invoice-content'); 
-            const dailyNum = document.getElementById('daily-order-num-display').textContent;
+            const dailyNum = document.getElementById('daily-order-num-display').textContent || '00';
+            
             var opt = { 
-                margin: [10, 10, 10, 10], filename: 'Asmak_Order_' + dailyNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
+                margin: [10, 10, 10, 10], 
+                filename: 'Asmak_Order_' + dailyNum + '.pdf', 
+                image: { type: 'jpeg', quality: 1 }, 
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' }, 
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
-            html2pdf().set(opt).from(invoiceElement).save();
+
+            // استخدام نظام Promises لتأكيد الحفظ وإعادة الزر لحالته
+            html2pdf().set(opt).from(invoiceElement).save().then(function() {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }).catch(function(err) {
+                console.error('PDF generation error: ', err);
+                alert(currentLang === 'ar' ? 'حدث خطأ غير متوقع أثناء الحفظ. جرب التقاط صورة للشاشة.' : 'Error saving PDF. Please take a screenshot.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
         }
 
         function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; backToMenu(); updateCartDisplay(); window.scrollTo(0, 0); }
