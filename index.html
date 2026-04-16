@@ -69,7 +69,7 @@
         html[dir="ltr"] .lang-switch-btn { left: auto; right: 15px; }
         html[dir="ltr"] .global-share-btn { right: auto; left: 15px; }
 
-        /* إضافة: قسم اختيار الفرع الإلزامي */
+        /* قسم اختيار الفرع الإلزامي */
         .branch-section {
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 20px; margin: 15px; border-radius: 16px; text-align: center;
@@ -278,8 +278,8 @@
         <div class="branch-section" id="branch-section-container">
             <div class="branch-title" id="branch-select-text">الرجاء تحديد الفرع لخدمتك</div>
             <div class="branch-options">
-                <button class="branch-btn" id="btn-branch-safa" onclick="selectBranch('فرع الصفا', this)">فرع الصفا</button>
-                <button class="branch-btn" id="btn-branch-naseem" onclick="selectBranch('فرع النسيم', this)">فرع النسيم</button>
+                <button class="branch-btn" id="btn-branch-safa" onclick="selectBranch('الصفا', this)">الصفا</button>
+                <button class="branch-btn" id="btn-branch-naseem" onclick="selectBranch('النسيم', this)">النسيم</button>
             </div>
             <div id="branch-error-msg" class="branch-error">يجب اختيار الفرع أولاً قبل الانتقال للسلة!</div>
         </div>
@@ -340,8 +340,8 @@
             
             <div class="invoice-box" id="invoice-content">
                 <div style="text-align:center; margin-bottom:15px;">
-                    <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:900;" id="invoice-restaurant-name"></h3>
                     <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" crossorigin="anonymous" onerror="this.style.display='none'">
+                    <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:900;" id="invoice-restaurant-name"></h3>
                     <p style="font-size:14px; color:gray; font-family:sans-serif; font-weight:bold;" id="invoice-restaurant-phone"></p>
                 </div>
                 
@@ -451,7 +451,7 @@
         let currentFishWeight = 1.0; 
         let currentDiscountRate = 0; 
         let currentCategoryIdx = 0; 
-        let currentBranch = null; // إضافة: متغير لحفظ الفرع المختار
+        let currentBranch = null; 
 
         const translations = {
             ar: {
@@ -461,7 +461,7 @@
                 subtotalLabel: "الإجمالي قبل الخصم:", discountLabel: "الخصم (15%):", totalLabel: "الإجمالي النهائي:", currency: "ريال", qty: "الكمية:", emptyCart: "السلة فارغة، يرجى إضافة عناصر من المنيو.",
                 nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:",
                 shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!", navHome: "الرئيسية", navCart: "السلة", outOfStock: "نفدت الكمية",
-                branchSelectText: "الرجاء تحديد الفرع لخدمتك", branchSafa: "فرع الصفا", branchNaseem: "فرع النسيم", branchRequired: "يجب اختيار الفرع أولاً قبل الانتقال للسلة!", branchLabel: "الفرع:" // إضافة تراجم الفروع
+                branchSelectText: "الرجاء تحديد الفرع لخدمتك", branchSafa: "الصفا", branchNaseem: "النسيم", branchRequired: "يجب اختيار الفرع أولاً قبل الانتقال للسلة!", branchLabel: "الفرع:" 
             },
             en: {
                 lang: "AR", addCart: "Add", cookingMethod: "Please select an option", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
@@ -470,11 +470,10 @@
                 subtotalLabel: "Subtotal:", discountLabel: "Discount (15%):", totalLabel: "Grand Total:", currency: "SR", qty: "Qty:", emptyCart: "Cart is empty.",
                 nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:",
                 shareMenu: "Share", linkCopied: "Link copied successfully!", navHome: "Home", navCart: "Cart", outOfStock: "Out of Stock",
-                branchSelectText: "Please select a branch", branchSafa: "Al-Safa Branch", branchNaseem: "Al-Naseem Branch", branchRequired: "Please select a branch before checking out!", branchLabel: "Branch:" // إضافة تراجم الفروع
+                branchSelectText: "Please select a branch", branchSafa: "Al-Safa", branchNaseem: "Al-Naseem", branchRequired: "Please select a branch before checking out!", branchLabel: "Branch:" 
             }
         };
 
-        // إضافة: دالة اختيار الفرع
         function selectBranch(branchNameAr, btnElement) {
             currentBranch = branchNameAr;
             document.querySelectorAll('.branch-btn').forEach(btn => btn.classList.remove('active'));
@@ -494,7 +493,6 @@
                 }
                 menuData = { categoriesAr: [], categoriesEn: [], items: {} };
                 sheetItems.forEach(item => {
-                    // الفلتر الذكي: تجاهل أي صف لا يحتوي على اسم وجبة أو لا يحتوي على فئة
                     if (!item.nameAr || item.nameAr.trim() === "" || !item.category || item.category.trim() === "") return;
 
                     const catAr = item.category; 
@@ -551,7 +549,6 @@
             document.getElementById('nav-home-text').textContent = translations[lang].navHome;
             document.getElementById('nav-cart-text').textContent = translations[lang].navCart;
             
-            // إضافة: ترجمة أزرار الفروع
             document.getElementById('branch-select-text').textContent = translations[lang].branchSelectText;
             document.getElementById('btn-branch-safa').textContent = translations[lang].branchSafa;
             document.getElementById('btn-branch-naseem').textContent = translations[lang].branchNaseem;
@@ -734,7 +731,6 @@
         }
 
         function goToCheckout() { 
-            // إضافة: منع الذهاب للسلة إلا بعد اختيار الفرع
             if (!currentBranch) {
                 const errMsg = document.getElementById('branch-error-msg');
                 errMsg.textContent = translations[currentLang].branchRequired;
@@ -783,8 +779,7 @@
             document.getElementById('invoice-customer-name').textContent = nameInput;
             document.getElementById('invoice-total-display').textContent = `${finalTotal.toFixed(2)} ${translations[currentLang].currency}`;
             
-            // إضافة: عرض الفرع في الفاتورة
-            let branchDisplay = currentLang === 'ar' ? currentBranch : (currentBranch === 'فرع الصفا' ? 'Al-Safa Branch' : 'Al-Naseem Branch');
+            let branchDisplay = currentLang === 'ar' ? currentBranch : (currentBranch === 'الصفا' ? 'Al-Safa' : 'Al-Naseem');
             document.getElementById('invoice-branch-display').textContent = translations[currentLang].branchLabel + " " + branchDisplay;
             
             let itemsHtml = '';
@@ -855,8 +850,7 @@
             let dateArabicStr = `${today.getDate()} ${monthsAr[today.getMonth()]} ${today.getFullYear()}`; 
 
             let subTotal = 0; 
-            // إضافة: تحديد الفرع في رسالة الواتساب والسيرفر
-            let branchDisplay = currentLang === 'ar' ? currentBranch : (currentBranch === 'فرع الصفا' ? 'Al-Safa Branch' : 'Al-Naseem Branch');
+            let branchDisplay = currentLang === 'ar' ? currentBranch : (currentBranch === 'الصفا' ? 'Al-Safa' : 'Al-Naseem');
             
             let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n`;
             message += `📍 *الفرع:* ${branchDisplay}\n`;
@@ -882,7 +876,7 @@
                 invoiceNum: paddedInvoiceNum, 
                 customerName: nameInput.value.trim(), 
                 customerPhone: phoneInput.value.trim(), 
-                branch: currentBranch, // تم إضافة الفرع للسيرفر 
+                branch: currentBranch, 
                 orderMessage: message 
             };
             const webhookUrl = "https://intercivic-athetosic-bristol.ngrok-free.dev/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
