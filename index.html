@@ -1,832 +1,215 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="mainHtml">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Flow Menu | White Aqua Crystal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>منيو اسماك المحيط - اختيار الفرع</title>
     <style>
-        :root {
-            /* الألوان المستنبطة من شعار "أسماك المحيط" */
-            --light-bg: #ffffff; 
-            --card-bg: #ffffff; 
-            --primary-aqua: #00a2b8; 
-            --aqua-dark: #007a8a; 
-            --aqua-light: #e0f9fb; 
-            --aqua-glow: 0 4px 15px rgba(0, 162, 184, 0.3);
-            --dark-blue: #1c3d52; 
-            --text-muted: #7f8c8d;
-            --logo-orange: #f47920; 
-            --glass-border: rgba(0, 162, 184, 0.15);
-            --success-green: #2ecc71;
-            --red-error: #e74c3c;
-        }
+        /* الخطوط الرسمية النظيفة */
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap');
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #003366;
+            --accent-color: #f8f9fa;
+            --text-dark: #333;
+            --disabled-grey: #ccc;
+        }
 
         body {
-            background-color: var(--light-bg); color: var(--dark-blue); overflow-x: hidden; 
-            padding-bottom: 100px; display: flex; flex-direction: column; min-height: 100vh;
-            position: relative;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            margin: 0;
+            background-color: #fff;
+            color: var(--text-dark);
         }
 
-        /* تفاعل بلورات أعماق البحر */
-        .ocean-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 0%, var(--aqua-light) 0%, #ffffff 80%);
-            overflow: hidden; pointer-events: none;
+        /* حاوية اختيار الفرع */
+        .branch-selector {
+            padding: 20px;
+            background: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            text-align: center;
         }
-        .bubble {
-            position: absolute; bottom: -50px; 
-            background: linear-gradient(135deg, rgba(0, 162, 184, 0.05), rgba(255, 255, 255, 0.6));
-            border: 1px solid rgba(0, 162, 184, 0.2);
-            border-radius: 40% 60% 50% 50%; 
-            box-shadow: 0 8px 32px 0 rgba(0, 162, 184, 0.08);
-            backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-            animation: rise linear infinite, morph 5s ease-in-out infinite alternate;
+
+        .branch-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
         }
-        @keyframes morph { 0% { border-radius: 40% 60% 50% 50%; } 50% { border-radius: 50% 50% 40% 60%; } 100% { border-radius: 40% 60% 50% 50%; } }
-        @keyframes rise { 0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100vh) scale(1.5) rotate(360deg); opacity: 0; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes shimmer { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-        @keyframes pulse-glow { 0% { box-shadow: 0 0 10px rgba(0, 162, 184, 0.3); } 50% { box-shadow: 0 0 25px rgba(0, 162, 184, 0.6); } 100% { box-shadow: 0 0 10px rgba(0, 162, 184, 0.3); } }
 
-        header { 
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 15px 20px; border-bottom: 1px solid var(--glass-border); 
-            position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        .branch-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         }
-        
-        .logo-container { width: 95px; height: 95px; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary-aqua); box-shadow: var(--aqua-glow); background-color: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-        .logo-img { width: 100%; height: 100%; object-fit: cover; background: white; border-radius: 50%; }
-        .restaurant-name { color: var(--dark-blue); font-size: 22px; font-weight: 900; display: flex; flex-direction: column; align-items: center; text-align: center; letter-spacing: 1px;}
-        
-        .lang-switch-btn { position: absolute; top: 15px; left: 15px; background: var(--white); color: var(--primary-aqua); border: 2px solid var(--primary-aqua); border-radius: 12px; padding: 6px 14px; font-weight: 800; cursor: pointer; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,162,184,0.1);}
-        .lang-switch-btn:hover { background: var(--primary-aqua); color: var(--white); }
-        .global-share-btn { position: absolute; top: 15px; right: 15px; background: var(--white); color: var(--primary-aqua); border: 2px solid var(--primary-aqua); border-radius: 12px; padding: 6px 12px; font-weight: 800; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,162,184,0.1);}
-        .global-share-btn:hover { background: var(--primary-aqua); color: var(--white); }
-        html[dir="ltr"] .lang-switch-btn { left: auto; right: 15px; }
-        html[dir="ltr"] .global-share-btn { right: auto; left: 15px; }
 
-        /* القصص */
-        .category-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 20px 15px; margin-bottom: 5px; gap: 18px; scrollbar-width: none; }
-        .category-nav::-webkit-scrollbar { display: none; }
-        .story-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.6; transition: all 0.3s ease; min-width: 75px; }
-        .story-item.active { opacity: 1; transform: scale(1.1); }
-        .story-ring { width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: var(--aqua-light); margin-bottom: 10px; transition: all 0.3s; position: relative; border: 1px solid var(--glass-border); }
-        .story-item.active .story-ring { background: linear-gradient(135deg, var(--aqua-dark), var(--primary-aqua)); box-shadow: var(--aqua-glow); border: none;}
-        .story-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center; border: 3px solid var(--white); background: var(--white); }
-        .story-text { font-size: 14px; font-weight: 800; color: var(--text-muted); white-space: nowrap; text-align: center; transition: color 0.3s;}
-        .story-item.active .story-text { color: var(--aqua-dark); font-weight: 900; }
-
-        .container { padding: 0 15px; max-width: 900px; margin: 0 auto; flex: 1; width: 100%; }
-        .menu-phase, .checkout-phase, .thank-you-phase { display: none; }
-        .active-phase { display: block; animation: fadeIn 0.5s ease-out; }
-        
-        .section-title { color: var(--dark-blue); margin: 10px 0 25px; font-size: 24px; font-weight: 900; display: inline-block; position: relative; border-bottom: 3px solid var(--primary-aqua); padding-bottom: 5px;}
-        
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 20px; }
-        @media (min-width: 600px) { .menu-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
-
-        .item-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 20px; padding: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); display: flex; flex-direction: column; border: 1px solid var(--glass-border); transition: all 0.4s ease; animation: fadeIn 0.6s ease-out forwards; }
-        .item-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 162, 184, 0.15); border-color: var(--primary-aqua); background: rgba(255, 255, 255, 0.95);}
-        .item-card.out-of-stock { opacity: 0.5; pointer-events: none; filter: grayscale(100%); } 
-
-        .item-image-container { 
-            width: 100%; 
-            height: 170px; 
-            border-radius: 14px; 
-            overflow: hidden; 
-            margin-bottom: 15px; 
-            background: var(--aqua-light); 
-            position: relative; 
+        .branch-btn {
+            padding: 12px 25px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
         }
-        .item-image { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            object-position: center; 
-            opacity: 0.95; 
-            transition: transform 0.5s ease, opacity 0.5s;
+
+        .branch-btn.active {
+            background: var(--primary-color);
+            color: white;
         }
-        .item-card:hover .item-image { transform: scale(1.05); opacity: 1;}
-        
-        .item-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); padding: 5px 14px; border-radius: 10px; font-size: 12px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,162,184,0.4); z-index: 2;}
-        html[dir="ltr"] .item-badge { right: auto; left: 12px; }
 
-        .item-details { display: flex; justify-content: space-between; align-items: center; padding: 0 5px 5px; }
-        .item-title-wrapper { flex: 1; padding-left: 10px; }
-        html[dir="ltr"] .item-title-wrapper { padding-left: 0; padding-right: 10px; }
-        .item-title { color: var(--dark-blue); font-size: 19px; font-weight: 900; display: block; margin-bottom: 6px;}
-        .item-price { color: var(--aqua-dark); font-weight: 900; font-size: 18px; display: block; }
-        
-        .add-to-cart-btn { background: transparent; color: var(--primary-aqua); border: 2px solid var(--primary-aqua); border-radius: 12px; padding: 10px 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
-        .add-to-cart-btn:hover { background: var(--primary-aqua); color: var(--white); box-shadow: var(--aqua-glow); }
-
-        /* زر لعبة الحظ */
-        .gamification-btn { position: fixed; bottom: 95px; right: 20px; width: 65px; height: 65px; background: linear-gradient(135deg, var(--aqua-light), var(--primary-aqua)); border: 3px solid var(--white); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 32px; box-shadow: var(--aqua-glow); z-index: 1000; cursor: pointer; transition: all 0.3s; animation: pulse-glow 2s infinite, wiggle 3s infinite; }
-        .gamification-btn:hover { transform: scale(1.1); background: var(--primary-aqua); }
-        html[dir="ltr"] .gamification-btn { right: auto; left: 20px; }
-
-        .empty-section-msg { text-align: center; color: var(--text-muted); padding: 40px 20px; font-style: italic; }
-        .loading-msg { text-align: center; padding: 60px 20px; font-size: 18px; font-weight: bold; color: var(--primary-aqua); }
-
-        /* مودال الخيارات */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 3000; }
-        .modal-content { background: var(--white); padding: 35px; border-radius: 24px; width: 90%; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); position: relative; animation: fadeIn 0.3s ease-out; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 32px; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
-        .modal-close:hover { color: var(--red-error); }
-        .modal-title { color: var(--dark-blue); margin-bottom: 25px; font-size: 24px; text-align: center; font-weight: 900; }
-        
-        .weight-control-group { display: flex; align-items: center; justify-content: space-between; background: var(--aqua-light); border-radius: 16px; padding: 15px 20px; margin-bottom: 25px; border: 1px solid rgba(0,162,184,0.1);}
-        .weight-label { font-size: 16px; font-weight: 800; color: var(--dark-blue); }
-        .stepper { display: flex; align-items: center; background: transparent;}
-        .stepper-btn { background: var(--primary-aqua); border: none; width: 40px; height: 40px; border-radius: 12px; font-size: 24px; font-weight: bold; color: var(--white); cursor: pointer; transition: all 0.2s; }
-        .stepper-btn:hover { background: var(--aqua-dark); box-shadow: 0 4px 10px rgba(0,162,184,0.3);}
-        .stepper-value { font-size: 20px; font-weight: 900; color: var(--aqua-dark); width: 60px; text-align: center; }
-
-        .option-group { margin-bottom: 25px; }
-        .option-label { display: flex; align-items: center; background: var(--aqua-light); border: 2px solid var(--glass-border); border-radius: 16px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease; }
-        .option-label.active { border-color: var(--primary-aqua); box-shadow: inset 0 0 15px rgba(0,162,184,0.15); background: rgba(0,162,184,0.05);}
-        .option-input { margin-left: 15px; accent-color: var(--primary-aqua); width: 22px; height: 22px; }
-        html[lang="en"] .option-input { margin-left: 0; margin-right: 15px; }
-        .option-text { font-size: 18px; font-weight: 900; color: var(--dark-blue); }
-        .confirm-modal-btn { background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); border: none; border-radius: 16px; padding: 18px; width: 100%; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: var(--aqua-glow); transition: transform 0.2s; }
-        .confirm-modal-btn:active { transform: scale(0.95); }
-
-        /* Checkout */
-        .checkout-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; background: var(--white); border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
-        .checkout-item-details { flex-grow: 1; }
-        .checkout-item-title { color: var(--dark-blue); font-weight: 900; font-size: 18px; }
-        .checkout-item-sub { color: var(--text-muted); font-size: 14px; font-weight: 700; display:block; margin-top:4px;}
-        .checkout-item-price-group { text-align: left; margin-left: 15px; }
-        .checkout-item-qty { color: var(--aqua-dark); font-size: 14px; font-weight: 800; background: var(--aqua-light); padding: 4px 12px; border-radius: 8px; display:inline-block; margin-bottom:5px;}
-        .checkout-item-total { color: var(--primary-aqua); font-weight: 900; font-size: 17px; display:block;}
-        .remove-item-btn { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231,76,60,0.2); color: var(--red-error); font-size: 22px; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;}
-        .remove-item-btn:hover { background: var(--red-error); color: white;}
-        
-        .checkout-form-section, .totals-section { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--glass-border); margin-bottom: 25px; }
-        .form-title { color: var(--dark-blue); margin-bottom: 20px; font-size: 22px; font-weight: 900; border-bottom: 2px dashed var(--aqua-light); padding-bottom: 15px;}
-        .form-group { margin-bottom: 20px; }
-        .form-input { width: 100%; padding: 18px; border: 2px solid var(--aqua-light); border-radius: 16px; font-size: 16px; color: var(--dark-blue); background: #fdfdfd; transition: all 0.3s; font-weight: 600;}
-        .form-input::placeholder { color: var(--text-muted); font-weight: 500;}
-        .form-input:focus { outline: none; border-color: var(--primary-aqua); background: var(--white); box-shadow: 0 0 15px rgba(0,162,184,0.1); }
-        .form-input.error { border-color: var(--red-error); background: rgba(231, 76, 60, 0.03);}
-        .error-message { color: var(--red-error); font-size: 13px; font-weight: 800; margin-top: 6px; display: none; }
-        .promo-container { display: flex; gap: 12px; }
-        .btn-apply-promo { background: var(--primary-aqua); color: var(--white); border: none; border-radius: 14px; padding: 0 25px; font-size: 16px; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,162,184,0.3);}
-        
-        .total-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 18px; font-weight: 800; color: var(--dark-blue); }
-        .discount-row { color: var(--success-green); font-weight: 900; display: none; }
-        .grand-total { font-weight: 900; font-size: 24px; color: var(--dark-blue); border-top: 2px dashed var(--aqua-light); padding-top: 20px; margin-top: 10px;}
-        .total-price.final { color: var(--aqua-dark); font-size: 28px; }
-
-        .checkout-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 35px; }
-        .back-to-menu-btn, .confirm-order-btn { border: none; border-radius: 16px; padding: 20px; font-size: 18px; font-weight: 900; cursor: pointer; text-align: center; transition: all 0.3s; }
-        .back-to-menu-btn { background: var(--aqua-light); color: var(--aqua-dark); }
-        .back-to-menu-btn:hover { background: var(--primary-aqua); color: white; }
-        
-        .confirm-order-btn { background: linear-gradient(135deg, #128C7E, #25D366); color: var(--white); display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 25px rgba(37,211,102,0.4); position: relative; overflow: hidden; white-space: nowrap; }
-        .confirm-order-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); animation: shimmer 2.5s infinite; }
-        .confirm-order-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37,211,102,0.5);}
-        
-        .confirm-order-btn.loading { opacity: 0.8; pointer-events: none; }
-        .confirm-order-btn.loading::before { display: none; }
-        .confirm-order-btn.loading .btn-text { display: none; }
-        .confirm-order-btn.loading svg { display: none; }
-        .confirm-order-btn::after { content: ''; position: absolute; width: 28px; height: 28px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--white); animation: spin 1s ease-in-out infinite; display: none; }
-        .confirm-order-btn.loading::after { display: block; }
-
-        /* صفحة الشكر والفاتورة */
-        .thank-you-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px 20px; text-align: center; margin-top: 20px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
-        
-        .invoice-box { background: #ffffff; color: var(--dark-blue); border: 2px dashed var(--primary-aqua); padding: 25px; margin: 25px 0; border-radius: 16px; text-align: right; direction: rtl; position: relative; box-shadow: inset 0 0 20px rgba(0,162,184,0.05);}
-        .invoice-box hr { border: 0; border-top: 1px dashed #ccc; margin: 18px 0; }
-        
-        .invoice-logo-small { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px auto; display: block; border: 2px solid var(--primary-aqua); }
-        
-        .btn-download-pdf { background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); border: none; border-radius: 16px; padding: 18px; width: 100%; font-size: 18px; font-weight: 900; cursor: pointer; margin-bottom: 15px; box-shadow: var(--aqua-glow); transition: transform 0.2s;}
-        .btn-download-pdf:hover { transform: translateY(-2px); }
-
-        .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; color: var(--text-muted); font-size: 13px; font-weight: 700; position: relative; z-index: 10;}
-        .powered-by { display: inline-block; font-weight: 800; color: var(--aqua-dark); background: var(--white); border: 1px solid var(--glass-border); padding: 8px 22px; border-radius: 20px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; position: relative; overflow: hidden; white-space: nowrap; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,162,184,0.1);}
-
-        /* الشريط السفلي */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            display: flex; justify-content: space-around; align-items: center; padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); 
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.06); z-index: 1000; border-top: 1px solid rgba(0,162,184,0.1);
+        /* قائمة الطعام */
+        .menu-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-weight: 900; font-size: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; width: 45%; }
-        .nav-item.active { color: var(--primary-aqua); transform: translateY(-2px);}
-        .nav-icon { font-size: 24px; margin-bottom: 4px; transition: transform 0.3s; }
-        .nav-item.active .nav-icon { transform: scale(1.15); filter: drop-shadow(0 4px 8px rgba(0,162,184,0.4));}
-        .nav-badge { position: absolute; top: -6px; right: 50%; transform: translateX(18px); background: var(--red-error); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 900; border: 2px solid var(--white); display: none; box-shadow: 0 4px 10px rgba(231,76,60,0.4);}
-        html[dir="ltr"] .nav-badge { right: auto; left: 50%; transform: translateX(0px); }
 
-        .flying-img { position: fixed; z-index: 9999; border-radius: 50%; width: 60px; height: 60px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,162,184,0.4); pointer-events: none; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid var(--white);}
-        
-        @media (max-width: 600px) { .checkout-actions { grid-template-columns: 1fr; } .checkout-item { flex-wrap: wrap; } .remove-item-btn { order: -1; margin-right: 0; margin-left: 10px; } }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-info h3 { margin: 0; font-size: 1rem; }
+        .item-info p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
+
+        .add-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* شريط الطلب السفلي */
+        .checkout-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .order-btn {
+            background: var(--disabled-grey);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: not-allowed;
+            transition: background 0.3s;
+        }
+
+        .order-btn.ready {
+            background: #28a745;
+            cursor: pointer;
+        }
+
+        /* رسالة التنبيه */
+        .branch-hint {
+            font-size: 0.85rem;
+            color: #d9534f;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="ocean-bg">
-        <div class="bubble" style="left: 15%; width: 35px; height: 35px; animation-duration: 9s; animation-delay: 0s;"></div>
-        <div class="bubble" style="left: 35%; width: 25px; height: 25px; animation-duration: 6s; animation-delay: 2s;"></div>
-        <div class="bubble" style="left: 55%; width: 45px; height: 45px; animation-duration: 11s; animation-delay: 4s;"></div>
-        <div class="bubble" style="left: 75%; width: 30px; height: 30px; animation-duration: 8s; animation-delay: 1s;"></div>
-        <div class="bubble" style="left: 85%; width: 20px; height: 20px; animation-duration: 5s; animation-delay: 3s;"></div>
-    </div>
-
-    <header>
-        <button class="lang-switch-btn" id="lang-switch-btn" onclick="toggleLanguage()">EN</button>
-        <button class="global-share-btn" onclick="shareMenu()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-            <span id="share-menu-text">مشاركة</span>
-        </button>
-        <div class="logo-container">
-            <img src="لوقو اسماك المحيط.jpeg" alt="Logo" class="logo-img" id="main-logo-img" onerror="this.style.display='none'">
-        </div>
-        <div class="restaurant-name">
-            <span id="name-ar">اسم المطعم</span>
-        </div>
-    </header>
-
-    <div class="gamification-btn" onclick="alert('🎁 عجلة الحظ والجوائز... قريباً في التحديث القادم!')">🎁</div>
-
-    <div id="menu-phase" class="menu-phase active-phase">
-        <nav class="category-nav" id="category-nav"></nav>
-        <main class="container" id="menu-container"></main>
-    </div>
-
-    <div id="checkout-phase" class="checkout-phase container">
-        <h2 class="section-title" id="checkout-title" style="margin-top:20px;">تأكيد طلبك</h2>
-        <div class="checkout-items-list" id="checkout-items-list"></div>
-        <div class="checkout-form-section">
-            <h3 class="form-title" id="cust-info-title">معلومات العميل</h3>
-            <div class="form-group">
-                <input type="text" id="customer-name" class="form-input" placeholder="اسم العميل* - Name*">
-                <div class="error-message" id="name-error">يرجى إدخال الاسم - Please enter name</div>
-            </div>
-            <div class="form-group">
-                <input type="tel" id="customer-phone" class="form-input" placeholder="رقم الجوال* - Phone* (05xxxxxxxx)">
-                <div class="error-message" id="phone-error">رقم الهاتف غير صحيح - Invalid phone</div>
-            </div>
-            <div class="form-group">
-                <textarea id="order-notes" class="form-input form-textarea" placeholder="ملاحظات حول الطلب... - Order notes..."></textarea>
-            </div>
-            <div class="form-group promo-container">
-                <input type="text" id="promo-code" class="form-input" placeholder="كود الخصم - Promo code">
-                <button type="button" class="btn-apply-promo" id="btn-apply" onclick="applyPromoCode()">تطبيق</button>
-            </div>
-            <div id="promo-status-msg" style="font-size: 14px; margin-top: -5px; margin-bottom: 5px; font-weight:bold;"></div>
-        </div>
-        <div class="totals-section">
-            <div class="total-row">
-                <span id="subtotal-label">الإجمالي قبل الخصم:</span>
-                <span class="total-price" id="subtotal-price">0 ريال</span>
-            </div>
-            <div class="total-row discount-row" id="discount-row">
-                <span id="discount-label">الخصم (15%):</span>
-                <span class="total-price" id="discount-amount">0 ريال</span>
-            </div>
-            <div class="total-row grand-total">
-                <span id="total-label">الإجمالي النهائي:</span>
-                <span class="total-price final" id="final-total-price">0 ريال</span>
-            </div>
-        </div>
-        <div class="checkout-actions">
-            <button class="back-to-menu-btn" id="btn-back" onclick="backToMenu()">رجوع للمنيو</button>
-            <button class="confirm-order-btn" id="btn-confirm" onclick="confirmOrder()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                <span class="btn-text" id="btn-confirm-text">تأكيد وإرسال الطلب</span>
-            </button>
+    <div class="branch-selector">
+        <div class="branch-title">الرجاء اختيار الفرع لتجهيز الطلب</div>
+        <div class="branch-options">
+            <button class="branch-btn" onclick="selectBranch('الصفا', this)">فرع الصفا</button>
+            <button class="branch-btn" onclick="selectBranch('النسيم', this)">فرع النسيم</button>
         </div>
     </div>
 
-    <div id="thank-you-phase" class="thank-you-phase container">
-        <div class="thank-you-card">
-            <h2 style="color:var(--dark-blue); margin-bottom:15px; font-size:28px; font-weight:900;">شكراً لطلبك</h2>
-            <p style="color:var(--aqua-dark); margin-bottom:25px; font-size:19px; font-weight:800;">تم ارسال طلبكم بنجاح</p>
-            
-            <div class="invoice-box" id="invoice-content">
-                <div style="text-align:center; margin-bottom:15px;">
-                    <h3 style="color:var(--dark-blue); margin-bottom:5px; font-weight:900;" id="invoice-restaurant-name"></h3>
-                    <img src="" class="invoice-logo-small" alt="Logo" id="invoice-logo-img" crossorigin="anonymous" onerror="this.style.display='none'">
-                    <p style="font-size:14px; color:gray; font-family:sans-serif; font-weight:bold;" id="invoice-restaurant-phone"></p>
-                </div>
-                <hr>
-                
-                <div style="display:flex; justify-content:center; align-items:center; gap: 15px; background:rgba(0, 162, 184, 0.08); padding:12px; border-radius:15px; margin-bottom:20px; border:2px dashed var(--primary-aqua);">
-                    <strong style="font-size:22px; color:var(--dark-blue);">رقم الطلب:</strong>
-                    <span id="daily-order-num-display" style="font-size:36px; color:var(--logo-orange); font-weight:900; font-family:sans-serif; letter-spacing: 2px;"></span>
-                </div>
-
-                <div style="display:flex; gap:10px; font-size:16px; margin-bottom:8px; color:var(--dark-blue);">
-                    <strong>الفاتورة:</strong> <span id="invoice-number-display" style="color:var(--primary-aqua); font-family:sans-serif; font-weight:bold;"></span>
-                </div>
-                <div style="display:flex; gap:10px; font-size:16px; margin-bottom:8px; color:var(--dark-blue);">
-                    <strong>التاريخ:</strong> <span id="invoice-date-display" dir="ltr" style="font-family:sans-serif; display:inline-block;"></span>
-                </div>
-                <div style="display:flex; gap:10px; font-size:16px; color:var(--dark-blue);">
-                    <strong>العميل:</strong> <span id="invoice-customer-name" style="font-weight:800;"></span>
-                </div>
-                <hr>
-                <div id="invoice-items-list" style="font-size:16px; line-height:1.8; font-weight:600; color:var(--dark-blue);"></div>
-                <hr>
-                <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900; color:var(--dark-blue);">
-                    <strong>الإجمالي:</strong> <span id="invoice-total-display" style="color:var(--primary-aqua);"></span>
-                </div>
+    <div class="menu-container">
+        <div class="menu-item">
+            <div class="item-info">
+                <h3>سمك قاروص مشوي</h3>
+                <p>75 ريال</p>
             </div>
-
-            <button class="btn-download-pdf" onclick="downloadPDF()">تحميل الفاتورة PDF</button>
-            <button class="back-to-menu-btn" style="width:100%; border:2px solid var(--primary-aqua); background:transparent;" onclick="resetApp()">العودة للمنيو / طلب جديد</button>
+            <button class="add-btn" onclick="addToCart('سمك قاروص', 75)">اضافة</button>
         </div>
+        </div>
+
+    <div class="checkout-bar">
+        <div>
+            <div id="total-price">الاجمالي: 0 ريال</div>
+            <small id="branch-status" class="branch-hint">يجب اختيار الفرع أولا</small>
+        </div>
+        <button id="checkout-btn" class="order-btn" onclick="processOrder()" disabled>تاكيد الطلب</button>
     </div>
-
-    <div class="modal-overlay" id="fish-modal-overlay" style="z-index:3000;">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeFishModal()">&times;</span>
-            <h3 class="modal-title" id="fish-modal-title">الخيارات</h3>
-            
-            <div class="weight-control-group" id="weight-control-group">
-                <span class="weight-label" id="weight-label-text">الوزن المطلوب:</span>
-                <div class="stepper">
-                    <button class="stepper-btn" onclick="changeFishWeight(-0.5)">-</button>
-                    <div class="stepper-value"><span id="fish-weight-display">1.0</span> <span style="font-size:14px; color:var(--text-muted);">كجم</span></div>
-                    <button class="stepper-btn" onclick="changeFishWeight(0.5)">+</button>
-                </div>
-            </div>
-
-            <div class="option-group">
-                <label class="option-label" id="label-fried">
-                    <input type="radio" name="cooking-method" value="مقلي" class="option-input" id="fried-input">
-                    <span class="option-text" id="text-fried">مقلي - Fried</span>
-                </label>
-                <label class="option-label" id="label-grilled">
-                    <input type="radio" name="cooking-method" value="مشوي" class="option-input" id="grilled-input">
-                    <span class="option-text" id="text-grilled">مشوي - Grilled</span>
-                </label>
-            </div>
-            <button class="confirm-modal-btn" id="btn-confirm-modal" onclick="confirmFishAddition(event)">تأكيد وإضافة</button>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" id="nav-home-btn" onclick="backToMenu()">
-            <span class="nav-icon">🏠</span>
-            <span id="nav-home-text">الرئيسية</span>
-        </div>
-        <div class="nav-item" id="nav-cart-btn" onclick="goToCheckout()">
-            <span class="nav-icon" id="cart-icon-dest">🛒</span>
-            <span class="nav-badge" id="bottom-cart-badge">0</span>
-            <span id="nav-cart-text">السلة</span>
-        </div>
-    </nav>
-
-    <footer class="site-footer">
-        <div style="margin-bottom:12px;"><span class="powered-by">Powered by Smart Flow.co</span></div>
-        <p id="footer-text">جميع الحقوق محفوظة © 2026</p>
-    </footer>
 
     <script>
-        const restaurantsConfig = {
-            "asmak": {
-                nameAr: "أسماك المحيط", nameEn: "Asmak Al Mohit", phone: "0535659695", logo: "لوقو اسماك المحيط.jpeg", primaryColor: "#00a2b8",
-                sheetyUrl: "https://api.sheety.co/abac8a09c57e6cc05855740b0d02ef96/asmakalmohitMenu/menu"
-            }
-        };
+        let selectedBranch = null;
+        let cartTotal = 0;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentRestaurantId = urlParams.get('id') || 'asmak'; 
-        const currentRestaurant = restaurantsConfig[currentRestaurantId];
-
-        document.getElementById('name-ar').textContent = currentRestaurant.nameAr;
-        document.getElementById('main-logo-img').src = currentRestaurant.logo;
-        document.getElementById('invoice-logo-img').src = currentRestaurant.logo;
-        document.getElementById('invoice-restaurant-name').textContent = currentRestaurant.nameAr;
-        document.getElementById('invoice-restaurant-phone').textContent = currentRestaurant.phone;
-        document.getElementById('footer-text').textContent = `جميع الحقوق محفوظة لمطعم ${currentRestaurant.nameAr} © 2026`;
-        
-        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => { link.href = `https://wa.me/966${currentRestaurant.phone.substring(1)}`; });
-        
-        let menuData = { categoriesAr: [], categoriesEn: [], items: {} };
-        let currentLang = 'ar'; 
-        let currentCart = {}; 
-        let currentFishSelection = null; 
-        let currentFishWeight = 1.0; 
-        let currentDiscountRate = 0; 
-        let currentCategoryIdx = 0; 
-
-        const translations = {
-            ar: {
-                lang: "EN", addCart: "إضافة", cookingMethod: "يرجى اختيار الطريقة", fried: "مقلي", grilled: "مشوي", trayEmpty: "قريباً...",
-                checkoutTitle: "تأكيد طلبك", custInfoTitle: "معلومات العميل", custNamePlace: "اسم العميل*", custPhonePlace: "رقم الجوال* (05xxxxxxxx)",
-                orderNotesPlace: "ملاحظات حول الطلب...", promoPlace: "كود الخصم", btnApply: "تطبيق", btnBack: "رجوع للمنيو", btnConfirm: "تأكيد وإرسال الطلب", btnConfirmModal: "تأكيد وإضافة",
-                subtotalLabel: "الإجمالي قبل الخصم:", discountLabel: "الخصم (15%):", totalLabel: "الإجمالي النهائي:", currency: "ريال", qty: "الكمية:", emptyCart: "السلة فارغة، يرجى إضافة عناصر من المنيو.",
-                nameError: "يرجى إدخال الاسم", phoneError: "رقم الهاتف غير صحيح", promoSuccess: "تم تطبيق الخصم بنجاح!", promoError: "كود الخصم غير صحيح.", weightLabel: "الوزن المطلوب:",
-                shareMenu: "مشاركة", linkCopied: "تم نسخ الرابط بنجاح!", navHome: "الرئيسية", navCart: "السلة", outOfStock: "نفدت الكمية"
-            },
-            en: {
-                lang: "AR", addCart: "Add", cookingMethod: "Please select an option", fried: "Fried", grilled: "Grilled", trayEmpty: "Coming Soon...",
-                checkoutTitle: "Confirm Order", custInfoTitle: "Customer Info", custNamePlace: "Name*", custPhonePlace: "Phone* (05xxxxxxxx)",
-                orderNotesPlace: "Order notes...", promoPlace: "Promo code", btnApply: "Apply", btnBack: "Back", btnConfirm: "Confirm Order", btnConfirmModal: "Add",
-                subtotalLabel: "Subtotal:", discountLabel: "Discount (15%):", totalLabel: "Grand Total:", currency: "SR", qty: "Qty:", emptyCart: "Cart is empty.",
-                nameError: "Please enter name", phoneError: "Invalid phone", promoSuccess: "Promo code applied!", promoError: "Invalid code.", weightLabel: "Required Weight:",
-                shareMenu: "Share", linkCopied: "Link copied successfully!", navHome: "Home", navCart: "Cart", outOfStock: "Out of Stock"
-            }
-        };
-
-        async function fetchMenuFromSheets() {
-            const sheetyUrl = currentRestaurant.sheetyUrl; 
-            try {
-                document.getElementById('menu-container').innerHTML = '<div class="loading-msg">جاري تحميل القائمة... ⏳</div>';
-                const response = await fetch(sheetyUrl);
-                const data = await response.json();
-                const sheetItems = data.menu || data[Object.keys(data)[0]];
-                if (!sheetItems || sheetItems.length === 0) {
-                    document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px;">المنيو فارغ حالياً.</div>'; return;
-                }
-                menuData = { categoriesAr: [], categoriesEn: [], items: {} };
-                sheetItems.forEach(item => {
-                    // الفلتر الذكي: تجاهل أي صف لا يحتوي على اسم وجبة أو لا يحتوي على فئة (لمنع ظهور فئة "غير مصنف" الوهمية)
-                    if (!item.nameAr || item.nameAr.trim() === "" || !item.category || item.category.trim() === "") return;
-
-                    const catAr = item.category; 
-                    const catEn = item.categoryEn || catAr; 
-                    
-                    if (!menuData.items[catAr]) {
-                        menuData.items[catAr] = [];
-                        if (!menuData.categoriesAr.includes(catAr)) { menuData.categoriesAr.push(catAr); menuData.categoriesEn.push(catEn); }
-                    }
-                    
-                    let isAvailable = item.hasOwnProperty('available') ? (item.available === true || String(item.available).toUpperCase() === 'TRUE') : true;
-                    menuData.items[catAr].push({
-                        id: item.id ? item.id.toString() : Math.random().toString(36).substr(2, 9),
-                        nameAr: item.nameAr, nameEn: item.nameEn || "", price: parseFloat(item.price) || 0,
-                        isFish: String(item.isFish).toUpperCase() === "TRUE", image: item.image || "", badge: item.badge || "",
-                        isAvailable: isAvailable
-                    });
-                });
-                
-                let tabasiIdx = menuData.categoriesAr.findIndex(cat => cat.includes("تباسي الجمعات") || cat.includes("تباسي"));
-                currentCategoryIdx = tabasiIdx !== -1 ? tabasiIdx : 0;
-
-                try { currentLang = localStorage.getItem('asmakLang') || 'ar'; } catch(e) {}
-                init();
-            } catch (error) {
-                document.getElementById('menu-container').innerHTML = '<div style="text-align:center; padding:50px; color:red;">حدث خطأ في تحميل المنيو.</div>';
-            }
-        }
-
-        function init() { setLanguage(currentLang); updateCartDisplay(); }
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            try { localStorage.setItem('asmakLang', lang); } catch(e) {}
-            document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('lang-switch-btn').textContent = translations[lang].lang;
-            document.getElementById('share-menu-text').textContent = translations[lang].shareMenu;
-            document.getElementById('checkout-title').textContent = translations[lang].checkoutTitle;
-            document.getElementById('cust-info-title').textContent = translations[lang].custInfoTitle;
-            document.getElementById('customer-name').placeholder = translations[lang].custNamePlace;
-            document.getElementById('customer-phone').placeholder = translations[lang].custPhonePlace;
-            document.getElementById('order-notes').placeholder = translations[lang].orderNotesPlace;
-            document.getElementById('promo-code').placeholder = translations[lang].promoPlace;
-            document.getElementById('btn-apply').textContent = translations[lang].btnApply;
-            document.getElementById('btn-back').textContent = translations[lang].btnBack;
-            document.getElementById('btn-confirm-text').textContent = translations[lang].btnConfirm;
-            document.getElementById('subtotal-label').textContent = translations[lang].subtotalLabel;
-            document.getElementById('discount-label').textContent = translations[lang].discountLabel;
-            document.getElementById('total-label').textContent = translations[lang].totalLabel;
-            document.getElementById('text-fried').textContent = translations[lang].fried;
-            document.getElementById('text-grilled').textContent = translations[lang].grilled;
-            document.getElementById('btn-confirm-modal').textContent = translations[lang].btnConfirmModal;
-            document.getElementById('weight-label-text').textContent = translations[lang].weightLabel;
-            document.getElementById('nav-home-text').textContent = translations[lang].navHome;
-            document.getElementById('nav-cart-text').textContent = translations[lang].navCart;
+        function selectBranch(branchName, element) {
+            // تحديث الشكل المرئي
+            document.querySelectorAll('.branch-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
             
-            renderCategoryNav(); showCategoryByIndex(currentCategoryIdx);
+            // تخزين الفرع المختار
+            selectedBranch = branchName;
+            
+            // تحديث حالة زر الطلب
+            checkReadiness();
         }
 
-        function toggleLanguage() { setLanguage(currentLang === 'ar' ? 'en' : 'ar'); }
-
-        function shareMenu() {
-            const url = window.location.origin + window.location.pathname + "?id=" + currentRestaurantId;
-            const title = currentLang === 'ar' ? currentRestaurant.nameAr : currentRestaurant.nameEn;
-            if (navigator.share) { navigator.share({ title: title, url: url }).catch(console.error); } 
-            else { navigator.clipboard.writeText(url); alert(translations[currentLang].linkCopied); }
+        function addToCart(item, price) {
+            cartTotal += price;
+            document.getElementById('total-price').innerText = `الاجمالي: ${cartTotal} ريال`;
+            checkReadiness();
         }
 
-        function renderCategoryNav() {
-            const nav = document.getElementById('category-nav'); nav.innerHTML = '';
-            const cats = currentLang === 'ar' ? menuData.categoriesAr : menuData.categoriesEn;
-            cats.forEach((category, index) => {
-                const btn = document.createElement('div'); 
-                btn.className = 'story-item'; 
-                btn.id = `btn-cat-${index}`;
-                btn.onclick = () => showCategoryByIndex(index); 
-                
-                const catArName = menuData.categoriesAr[index];
-                const firstItemWithImg = menuData.items[catArName].find(i => i.image);
-                const imgSrc = firstItemWithImg ? firstItemWithImg.image : 'لوقو اسماك المحيط.jpeg'; 
-
-                btn.innerHTML = `<div class="story-ring"><img src="${imgSrc}" class="story-img" onerror="this.src='لوقو اسماك المحيط.jpeg'"></div><span class="story-text">${category}</span>`;
-                nav.appendChild(btn);
-            });
-        }
-
-        function renderMenu(categoryIdx) {
-            const container = document.getElementById('menu-container'); container.innerHTML = '';
-            const catsAr = menuData.categoriesAr; if(!catsAr || catsAr.length === 0) return;
-            const categoryNameAr = catsAr[categoryIdx]; const items = menuData.items[categoryNameAr];
-            const section = document.createElement('div'); section.className = 'category-section';
-            const title = document.createElement('h3'); title.className = 'section-title';
-            title.textContent = currentLang === 'ar' ? menuData.categoriesAr[categoryIdx] : menuData.categoriesEn[categoryIdx];
-            section.appendChild(title);
-
-            if (!items || items.length === 0) {
-                const emptyMsg = document.createElement('p'); emptyMsg.className = 'empty-section-msg'; emptyMsg.textContent = translations[currentLang].trayEmpty; section.appendChild(emptyMsg);
+        function checkReadiness() {
+            const btn = document.getElementById('checkout-btn');
+            const hint = document.getElementById('branch-status');
+            
+            if (selectedBranch && cartTotal > 0) {
+                btn.classList.add('ready');
+                btn.disabled = false;
+                hint.classList.add('hidden');
             } else {
-                const grid = document.createElement('div'); grid.className = 'menu-grid';
-                items.forEach(item => {
-                    const card = document.createElement('div'); 
-                    card.className = `item-card ${item.isAvailable ? '' : 'out-of-stock'}`; 
-                    let badgeHTML = item.badge && item.isAvailable ? `<span class="item-badge">${item.badge}</span>` : '';
-                    let imageHTML = item.image ? `<div class="item-image-container">${badgeHTML}<img src="${item.image}" alt="${currentLang === 'ar' ? item.nameAr : item.nameEn}" class="item-image" id="img-${item.id}" onerror="this.style.display='none'"></div>` : `<div class="item-image-container">${badgeHTML}</div>`;
-                    let btnHTML = item.isAvailable 
-                        ? `<button class="add-to-cart-btn" onclick="addToCartClicked(event, '${item.id}', '${categoryNameAr}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> ${translations[currentLang].addCart}</button>`
-                        : `<button class="add-to-cart-btn disabled-btn">${translations[currentLang].outOfStock}</button>`;
-                    
-                    card.innerHTML = `
-                        ${imageHTML}
-                        <div class="item-details">
-                            <div class="item-title-wrapper">
-                                <span class="item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span>
-                                <span class="item-price">${item.price} ${translations[currentLang].currency}</span>
-                            </div>
-                            ${btnHTML}
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-                section.appendChild(grid);
-            }
-            container.appendChild(section);
-        }
-
-        function showCategoryByIndex(idx) {
-            currentCategoryIdx = idx; try { localStorage.setItem('asmakCategoryIdx', idx); } catch(e) {}
-            document.querySelectorAll('.story-item').forEach(btn => btn.classList.remove('active'));
-            const selectedBtn = document.getElementById(`btn-cat-${idx}`); if (selectedBtn) {
-                selectedBtn.classList.add('active');
-                selectedBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-            renderMenu(idx);
-        }
-
-        function flyToCartAnimation(event, imgSrc) {
-            if(!event || !imgSrc) return;
-            if (navigator.vibrate) { navigator.vibrate(50); }
-            const cartIcon = document.getElementById('cart-icon-dest');
-            const flyingImg = document.createElement('img');
-            flyingImg.src = imgSrc; flyingImg.className = 'flying-img';
-            const startX = event.clientX || window.innerWidth / 2; const startY = event.clientY || window.innerHeight / 2;
-            const targetRect = cartIcon.getBoundingClientRect();
-            const targetX = targetRect.left + (targetRect.width / 2) - 30;
-            const targetY = targetRect.top + (targetRect.height / 2) - 30;
-            flyingImg.style.left = startX + 'px'; flyingImg.style.top = startY + 'px';
-            document.body.appendChild(flyingImg);
-            flyingImg.getBoundingClientRect(); 
-            flyingImg.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.1)`;
-            flyingImg.style.opacity = '0.5';
-            setTimeout(() => {
-                flyingImg.remove(); cartIcon.style.transform = 'scale(1.4)';
-                setTimeout(() => cartIcon.style.transform = 'scale(1)', 200);
-            }, 700); 
-        }
-
-        function addToCartClicked(event, itemId, categoryNameAr) {
-            const item = menuData.items[categoryNameAr].find(i => i.id === itemId.toString());
-            if (!item) return;
-            if (item.isFish) openFishModal(item, categoryNameAr, event); 
-            else { addToCart(item); if(item.image) flyToCartAnimation(event, item.image); }
-        }
-
-        function changeFishWeight(amount) {
-            let newWeight = currentFishWeight + amount;
-            if (newWeight >= 1.0) { 
-                currentFishWeight = newWeight; document.getElementById('fish-weight-display').textContent = currentFishWeight.toFixed(1);
-                if (navigator.vibrate) { navigator.vibrate(30); }
-            }
-        }
-
-        let tempEvent = null; 
-        function openFishModal(item, categoryNameAr, event) {
-            currentFishSelection = item; currentFishWeight = 1.0; tempEvent = event;
-            document.getElementById('fish-weight-display').textContent = "1.0";
-            document.getElementById('fish-modal-title').textContent = `${currentLang === 'ar' ? item.nameAr : item.nameEn}`;
-            document.getElementById('fried-input').checked = false; document.getElementById('grilled-input').checked = false;
-            document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
-            const weightGroup = document.getElementById('weight-control-group');
-            if (categoryNameAr && (categoryNameAr.includes('سماك') || categoryNameAr.includes('سمك'))) { weightGroup.style.display = 'flex'; } 
-            else { weightGroup.style.display = 'none'; }
-            document.getElementById('fish-modal-overlay').style.display = 'flex';
-        }
-
-        function closeFishModal() { document.getElementById('fish-modal-overlay').style.display = 'none'; currentFishSelection = null; tempEvent = null;}
-
-        document.querySelectorAll('.option-input').forEach(input => {
-            input.addEventListener('change', function() {
-                document.querySelectorAll('.option-label').forEach(label => label.classList.remove('active'));
-                if (this.checked) this.parentElement.classList.add('active');
-            });
-        });
-
-        function confirmFishAddition(event) {
-            if (!currentFishSelection) return;
-            const friedChecked = document.getElementById('fried-input').checked;
-            const grilledChecked = document.getElementById('grilled-input').checked;
-            if (!friedChecked && !grilledChecked) { alert(translations[currentLang].cookingMethod); return; }
-            const methodAr = friedChecked ? 'مقلي' : 'مشوي'; const methodEn = friedChecked ? 'Fried' : 'Grilled';
-            const showWeight = document.getElementById('weight-control-group').style.display !== 'none';
-            let optionTextAr = methodAr; let optionTextEn = methodEn;
-            let finalPrice = currentFishSelection.price; let itemKey = `${currentFishSelection.id}_${methodAr}`;
-            if (showWeight) {
-                optionTextAr += ` (${currentFishWeight} كجم)`; optionTextEn += ` (${currentFishWeight} KG)`;
-                finalPrice = currentFishSelection.price * currentFishWeight; itemKey += `_${currentFishWeight}`;
-            }
-            if (currentCart[itemKey]) { currentCart[itemKey].quantity += 1; } 
-            else { currentCart[itemKey] = { ...currentFishSelection, optionAr: optionTextAr, optionEn: optionTextEn, quantity: 1, price: finalPrice }; }
-            updateCartDisplay(); 
-            if(currentFishSelection.image && tempEvent) { flyToCartAnimation(tempEvent, currentFishSelection.image); }
-            closeFishModal();
-        }
-
-        function addToCart(item) {
-            const itemKey = item.id;
-            if (currentCart[itemKey]) currentCart[itemKey].quantity += 1; else currentCart[itemKey] = { ...item, quantity: 1 };
-            updateCartDisplay();
-        }
-
-        function updateCartDisplay() {
-            let totalItems = 0; for (const key in currentCart) totalItems += currentCart[key].quantity;
-            const badgeCount = document.getElementById('bottom-cart-badge');
-            if (totalItems > 0) { badgeCount.style.display = 'flex'; badgeCount.textContent = totalItems; } 
-            else { badgeCount.style.display = 'none'; }
-        }
-
-        function removeFromCart(itemKey) {
-            if (currentCart[itemKey]) {
-                if (currentCart[itemKey].quantity > 1) currentCart[itemKey].quantity -= 1; else delete currentCart[itemKey];
-                renderCartItems(); updateCartDisplay(); 
-            }
-        }
-
-        function goToCheckout() { 
-            document.getElementById('menu-phase').style.display = 'none'; document.getElementById('checkout-phase').style.display = 'block'; 
-            document.getElementById('nav-home-btn').classList.remove('active'); document.getElementById('nav-cart-btn').classList.add('active');
-            renderCartItems(); window.scrollTo(0, 0); 
-        }
-        function backToMenu() { 
-            document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('menu-phase').style.display = 'block'; document.getElementById('thank-you-phase').style.display = 'none';
-            document.getElementById('nav-cart-btn').classList.remove('active'); document.getElementById('nav-home-btn').classList.add('active');
-        }
-
-        function applyPromoCode() {
-            const codeInput = document.getElementById('promo-code').value.trim().toLowerCase(); const msgElement = document.getElementById('promo-status-msg');
-            if (codeInput === 'welcome15') { currentDiscountRate = 0.15; msgElement.textContent = translations[currentLang].promoSuccess; msgElement.style.color = 'var(--success-green)'; } 
-            else { currentDiscountRate = 0; msgElement.textContent = translations[currentLang].promoError; msgElement.style.color = 'var(--red-error)'; }
-            renderCartItems(); 
-        }
-
-        function renderCartItems() {
-            const list = document.getElementById('checkout-items-list'); list.innerHTML = '';
-            let subTotal = 0; let isEmpty = true;
-            for (const key in currentCart) {
-                isEmpty = false; const item = currentCart[key]; const itemTotal = item.price * item.quantity; subTotal += itemTotal;
-                const itemDiv = document.createElement('div'); itemDiv.className = 'checkout-item';
-                itemDiv.innerHTML = `<button class="remove-item-btn" onclick="removeFromCart('${key}')">&times;</button><div class="checkout-item-details"><span class="checkout-item-title">${currentLang === 'ar' ? item.nameAr : item.nameEn}</span>${item.optionAr ? `<span class="checkout-item-sub">(${currentLang === 'ar' ? item.optionAr : item.optionEn})</span>` : ''}</div><div class="checkout-item-price-group"><div class="checkout-item-qty">${translations[currentLang].qty} ${item.quantity}</div><div class="checkout-item-total">${itemTotal} ${translations[currentLang].currency}</div></div>`;
-                list.appendChild(itemDiv);
-            }
-            if (isEmpty) { list.innerHTML = `<p class="empty-section-msg">${translations[currentLang].emptyCart}</p>`; setTimeout(backToMenu, 1500); }
-            let discountAmount = subTotal * currentDiscountRate; let finalTotal = subTotal - discountAmount;
-            document.getElementById('subtotal-price').textContent = `${subTotal} ${translations[currentLang].currency}`;
-            const discountRow = document.getElementById('discount-row');
-            if (currentDiscountRate > 0) { discountRow.style.display = 'flex'; document.getElementById('discount-amount').textContent = `-${discountAmount.toFixed(2)} ${translations[currentLang].currency}`; } else { discountRow.style.display = 'none'; }
-            document.getElementById('final-total-price').textContent = `${finalTotal.toFixed(2)} ${translations[currentLang].currency}`;
-        }
-
-        function buildAndShowInvoice(finalTotal, nameInput, paddedInvoiceNum, dateStr, dailyPaddedNum) {
-            document.getElementById('daily-order-num-display').textContent = dailyPaddedNum;
-            document.getElementById('invoice-number-display').textContent = "#" + paddedInvoiceNum;
-            document.getElementById('invoice-date-display').textContent = dateStr;
-            document.getElementById('invoice-customer-name').textContent = nameInput;
-            document.getElementById('invoice-total-display').textContent = `${finalTotal.toFixed(2)} ${translations[currentLang].currency}`;
-            
-            let itemsHtml = '';
-            for (const key in currentCart) {
-                const item = currentCart[key]; const itemTotal = item.price * item.quantity;
-                let nameStr = currentLang === 'ar' ? item.nameAr : item.nameEn;
-                let optionStr = item.optionAr ? ` (${currentLang === 'ar' ? item.optionAr : item.optionEn})` : '';
-                itemsHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed #ccc; padding-bottom:5px; color:var(--dark-blue);"><span style="font-weight:700;">${nameStr}${optionStr} x ${item.quantity}</span><span style="font-weight:bold;">${itemTotal}</span></div>`;
-            }
-            document.getElementById('invoice-items-list').innerHTML = itemsHtml;
-            document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('thank-you-phase').style.display = 'block'; window.scrollTo(0, 0); 
-        }
-
-        function downloadPDF() {
-            const invoiceElement = document.getElementById('invoice-content'); 
-            const dailyNum = document.getElementById('daily-order-num-display').textContent;
-            var opt = { 
-                margin: [10, 10, 10, 10], filename: 'Asmak_Order_' + dailyNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
-            html2pdf().set(opt).from(invoiceElement).save();
-        }
-
-        function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; backToMenu(); updateCartDisplay(); window.scrollTo(0, 0); }
-
-        function confirmOrder() {
-            const nameInput = document.getElementById('customer-name'); const phoneInput = document.getElementById('customer-phone');
-            const nameError = document.getElementById('name-error'); const phoneError = document.getElementById('phone-error');
-            const notes = document.getElementById('order-notes').value; const promo = document.getElementById('promo-code').value;
-
-            nameInput.classList.remove('error'); phoneInput.classList.remove('error'); nameError.style.display = 'none'; phoneError.style.display = 'none';
-            let isValid = true;
-            if (nameInput.value.trim() === "") { nameInput.classList.add('error'); nameError.style.display = 'block'; isValid = false; }
-            const phoneRegex = /^05\d{8}$/;
-            if (!phoneRegex.test(phoneInput.value.trim())) { phoneInput.classList.add('error'); phoneError.style.display = 'block'; isValid = false; }
-            if (Object.keys(currentCart).length === 0) { backToMenu(); return; }
-            if (!isValid) return;
-
-            const btnConfirm = document.getElementById('btn-confirm'); btnConfirm.classList.add('loading');
-            
-            let invoiceNum = 1; 
-            try { 
-                let savedInvoiceNum = localStorage.getItem(currentRestaurantId + '_InvNum_Turq3'); 
-                if (savedInvoiceNum) { invoiceNum = parseInt(savedInvoiceNum) + 1; }
-                localStorage.setItem(currentRestaurantId + '_InvNum_Turq3', invoiceNum); 
-            } catch(e) {}
-            let paddedInvoiceNum = String(invoiceNum).padStart(5, '0');
-
-            let dailyOrderNum = 1;
-            let todayDate = new Date().toLocaleDateString('en-US'); 
-            try {
-                let lastDate = localStorage.getItem(currentRestaurantId + '_LastDate');
-                let savedDailyNum = localStorage.getItem(currentRestaurantId + '_DailyNum');
-                if (lastDate === todayDate) {
-                    if (savedDailyNum) dailyOrderNum = parseInt(savedDailyNum) + 1;
-                } else {
-                    dailyOrderNum = 1; localStorage.setItem(currentRestaurantId + '_LastDate', todayDate);
+                btn.classList.remove('ready');
+                btn.disabled = true;
+                hint.classList.remove('hidden');
+                
+                if (selectedBranch) {
+                    hint.innerText = "أضف أصنافاً للمنيو للبدء";
                 }
-                localStorage.setItem(currentRestaurantId + '_DailyNum', dailyOrderNum);
-            } catch(e) {}
-            let dailyPaddedNum = String(dailyOrderNum).padStart(2, '0');
-
-            let today = new Date(); 
-            let dateStr = today.toLocaleDateString('en-GB') + " " + today.toLocaleTimeString('en-US', {hour12: true});
-            let timeOnlyStr = today.toLocaleTimeString('en-US', {hour12: true});
-            const monthsAr = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
-            let dateArabicStr = `${today.getDate()} ${monthsAr[today.getMonth()]} ${today.getFullYear()}`; 
-
-            let subTotal = 0; 
-            let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n`;
-            message += `🔢 *رقم الطلب:* ${dailyPaddedNum}\n`;
-            message += `🧾 *الفاتورة:* #${paddedInvoiceNum}\n`;
-            message += `━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
-
-            for (const key in currentCart) {
-                const item = currentCart[key]; const itemTotal = item.price * item.quantity; subTotal += itemTotal;
-                let nameStr = currentLang === 'ar' ? item.nameAr : item.nameEn; let optionStr = item.optionAr ? ` (${currentLang === 'ar' ? item.optionAr : item.optionEn})` : '';
-                message += `▫️ ${item.quantity}x ${nameStr}${optionStr} = ${itemTotal} ${translations[currentLang].currency}\n`;
             }
-
-            let discountAmount = subTotal * currentDiscountRate; let finalTotal = subTotal - discountAmount;
-            message += `━━━━━━━━━━━━━━━\n`;
-            if (currentDiscountRate > 0) { message += `💵 *الإجمالي:* ${subTotal}\n📉 *الخصم:* -${discountAmount.toFixed(2)}\n`; }
-            message += `💰 *الإجمالي النهائي:* ${finalTotal.toFixed(2)} ${translations[currentLang].currency}\n`;
-            if (notes.trim() !== "") { message += `━━━━━━━━━━━━━━━\n📝 *ملاحظات:* ${notes.trim()}\n`; }
-            message += `━━━━━━━━━━━━━━━\n📅 *التاريخ:* ${dateArabicStr}\n⏱️ *الوقت:* ${timeOnlyStr}`;
-
-            const payload = { dailyOrderNum: dailyPaddedNum, invoiceNum: paddedInvoiceNum, customerName: nameInput.value.trim(), customerPhone: phoneInput.value.trim(), orderMessage: message };
-            const webhookUrl = "https://intercivic-athetosic-bristol.ngrok-free.dev/webhook/a3e7d41b-efda-4e6b-9ee4-e14efff011d1"; 
-
-            fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify(payload) })
-            .then(() => { 
-                btnConfirm.classList.remove('loading'); 
-                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr, dailyPaddedNum); 
-            })
-            .catch(() => { 
-                btnConfirm.classList.remove('loading'); 
-                buildAndShowInvoice(finalTotal, nameInput.value.trim(), paddedInvoiceNum, dateStr, dailyPaddedNum); 
-            });
         }
 
-        window.onload = fetchMenuFromSheets;
+        function processOrder() {
+            // هنا يتم ارسال البيانات الى السيرفر (n8n Webhook)
+            const orderData = {
+                branch: selectedBranch,
+                total: cartTotal,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            alert(`سيتم توجيه طلبك إلى ${selectedBranch}\nجاري التحويل للواتساب...`);
+            
+            // مثال للربط مع n8n لاحقاً:
+            // fetch('YOUR_N8N_WEBHOOK_URL', { method: 'POST', body: JSON.stringify(orderData) });
+        }
     </script>
 </body>
 </html>
