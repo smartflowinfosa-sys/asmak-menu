@@ -69,7 +69,7 @@
         html[dir="ltr"] .lang-switch-btn { left: auto; right: 15px; }
         html[dir="ltr"] .global-share-btn { right: auto; left: 15px; }
 
-        /* ستايل اختيار الفرع الإلزامي */
+        /* قسم اختيار الفرع الإلزامي */
         .branch-section {
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 20px; margin: 15px; border-radius: 16px; text-align: center;
@@ -87,7 +87,7 @@
         .branch-error { color: var(--red-error); font-size: 14px; font-weight: 800; margin-top: 10px; display: none; }
 
         /* القصص */
-        .category-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 20px 15px; margin-bottom: 5px; gap: 18px; scrollbar-width: none; }
+        .category-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 15px 20px; gap: 18px; scrollbar-width: none; }
         .category-nav::-webkit-scrollbar { display: none; }
         .story-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.6; transition: all 0.3s ease; min-width: 75px; }
         .story-item.active { opacity: 1; transform: scale(1.1); }
@@ -218,14 +218,15 @@
         /* صفحة الشكر والفاتورة */
         .thank-you-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px 20px; text-align: center; margin-top: 20px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
         
-        /* نفس ستايل الفاتورة الاصلي الخاص بك تماما */
         .invoice-box { background: #ffffff; color: var(--dark-blue); border: 2px dashed var(--primary-aqua); padding: 25px; margin: 25px 0; border-radius: 16px; text-align: right; direction: rtl; position: relative; box-shadow: inset 0 0 20px rgba(0,162,184,0.05);}
         .invoice-box hr { border: 0; border-top: 1px dashed #ccc; margin: 18px 0; }
         
+        /* ستايل اللوقو في الفاتورة (تمت استعادة الستايل الاصلي) */
         .invoice-logo-small { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px auto; display: block; border: 2px solid var(--primary-aqua); }
         
         .btn-download-pdf { background: linear-gradient(135deg, var(--primary-aqua), var(--aqua-dark)); color: var(--white); border: none; border-radius: 16px; padding: 18px; width: 100%; font-size: 18px; font-weight: 900; cursor: pointer; margin-bottom: 15px; box-shadow: var(--aqua-glow); transition: transform 0.2s;}
         .btn-download-pdf:hover { transform: translateY(-2px); }
+        .btn-download-pdf:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .site-footer { text-align: center; padding: 25px 15px 35px; margin-top: auto; color: var(--text-muted); font-size: 13px; font-weight: 700; position: relative; z-index: 10;}
         .powered-by { display: inline-block; font-weight: 800; color: var(--aqua-dark); background: var(--white); border: 1px solid var(--glass-border); padding: 8px 22px; border-radius: 20px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 0.5px; position: relative; overflow: hidden; white-space: nowrap; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,162,184,0.1);}
@@ -374,7 +375,7 @@
                 </div>
             </div>
 
-            <button class="btn-download-pdf" onclick="downloadPDF()">تحميل الفاتورة PDF</button>
+            <button class="btn-download-pdf" id="pdf-download-btn" onclick="downloadPDF()">تحميل الفاتورة PDF</button>
             <button class="back-to-menu-btn" style="width:100%; border:2px solid var(--primary-aqua); background:transparent;" onclick="resetApp()">العودة للمنيو / طلب جديد</button>
         </div>
     </div>
@@ -794,16 +795,42 @@
             document.getElementById('checkout-phase').style.display = 'none'; document.getElementById('thank-you-phase').style.display = 'block'; window.scrollTo(0, 0); 
         }
 
-        // دالة التحميل الاصلية التي تعتمدها وتعمل لديك بنجاح
+        /* ==================================================
+        وظيفة تحميل الـ PDF مع الحماية من توقف المتصفحات
+        ==================================================
+        */
         function downloadPDF() {
+            if (typeof window.html2pdf === 'undefined') {
+                alert(currentLang === 'ar' ? 'أداة تحميل الـ PDF محظورة في متصفحك. سيتم فتح نافذة الطباعة بدلاً من ذلك.' : 'PDF tool is blocked. Opening print dialog instead.');
+                window.print();
+                return;
+            }
+
+            const btn = document.getElementById('pdf-download-btn');
+            const originalText = btn.textContent;
+            btn.textContent = currentLang === 'ar' ? 'جاري تجهيز الملف...' : 'Preparing PDF...';
+            btn.disabled = true;
+
             const invoiceElement = document.getElementById('invoice-content'); 
-            const dailyNum = document.getElementById('daily-order-num-display').textContent;
+            const dailyNum = document.getElementById('daily-order-num-display').textContent || '00';
+            
             var opt = { 
-                margin: [10, 10, 10, 10], filename: 'Asmak_Order_' + dailyNum + '.pdf', image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: document.documentElement.offsetWidth }, 
+                margin: [10, 10, 10, 10], 
+                filename: 'Asmak_Order_' + dailyNum + '.pdf', 
+                image: { type: 'jpeg', quality: 1 }, 
+                html2canvas: { scale: 2, useCORS: true }, 
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
-            html2pdf().set(opt).from(invoiceElement).save();
+
+            html2pdf().set(opt).from(invoiceElement).save().then(function() {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }).catch(function(err) {
+                console.error('PDF error: ', err);
+                alert(currentLang === 'ar' ? 'حدث خطأ. حاول أخذ لقطة شاشة للفاتورة.' : 'Error. Please take a screenshot.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
         }
 
         function resetApp() { currentCart = {}; document.getElementById('promo-code').value = ''; currentDiscountRate = 0; backToMenu(); updateCartDisplay(); window.scrollTo(0, 0); }
@@ -854,8 +881,18 @@
             let subTotal = 0; 
             let branchDisplay = currentLang === 'ar' ? currentBranch : (currentBranch === 'الصفا' ? 'Al-Safa' : 'Al-Naseem');
             
+            // إضافة: خريطة روابط الفروع
+            const branchMaps = {
+                "الصفا": "https://maps.app.goo.gl/wJ1q54Tzex2LhU9t5", // رابط الصفا الحالي
+                "النسيم": "https://maps.google.com/?q=Jeddah+Al-Naseem" // رابط افتراضي للنسيم يمكنك تغييره لاحقاً
+            };
+            let branchLink = branchMaps[currentBranch] || "";
+
             let message = `🔔 *طلب جديد | ${currentRestaurant.nameAr}* 🔔\n`;
             message += `📍 *الفرع:* ${branchDisplay}\n`;
+            if (branchLink) {
+                message += `🗺️ *موقع الفرع:* ${branchLink}\n`;
+            }
             message += `🔢 *رقم الطلب:* ${dailyPaddedNum}\n`;
             message += `🧾 *الفاتورة:* #${paddedInvoiceNum}\n`;
             message += `━━━━━━━━━━━━━━━\n👤 *العميل:* ${nameInput.value.trim()}\n📱 *الجوال:* ${phoneInput.value.trim()}\n━━━━━━━━━━━━━━━\n🛒 *الطلبات:*\n`;
